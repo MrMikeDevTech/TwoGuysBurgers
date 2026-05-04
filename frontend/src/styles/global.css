@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}

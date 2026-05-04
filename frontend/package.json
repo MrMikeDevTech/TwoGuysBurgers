@@ -1,0 +1,30 @@
+{
+    "name": "twoguysburger-frontend",
+    "type": "module",
+    "version": "0.0.1",
+    "engines": {
+        "node": ">=22.12.0"
+    },
+    "scripts": {
+        "dev": "astro dev --port 5000 --host",
+        "build": "astro build",
+        "preview": "astro preview --port 5005 --host"
+    },
+    "dependencies": {
+        "astro": "6.2.2",
+        "tailwindcss": "4.2.4"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "4.2.4",
+        "@eslint/js": "10.0.1",
+        "@types/micromatch": "4.0.10",
+        "@types/node": "25.6.0",
+        "eslint": "10.3.0",
+        "eslint-plugin-astro": "1.7.0",
+        "globals": "17.6.0",
+        "prettier-plugin-astro": "0.14.1",
+        "prettier-plugin-tailwindcss": "0.8.0",
+        "typescript": "6.0.3",
+        "typescript-eslint": "8.59.2"
+    }
+}

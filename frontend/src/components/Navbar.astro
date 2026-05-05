@@ -1,0 +1,25 @@
+---
+// src/components/Navbar.astro
+const links = [
+  { label: 'Menú',      href: '#menu'      },
+  { label: 'Nosotros',  href: '#nosotros'  },
+  { label: 'Contacto',  href: '#footer'    },
+]
+---
+
+<nav class="fixed top-0 left-0 right-0 z-50 bg-brand-black border-b-4 border-brand-yellow flex items-center justify-between px-[5vw] py-3">
+  <a href="#" class="font-bebas text-3xl text-brand-red"
+     style="text-shadow: 2px 2px 0 #FFD600">
+    TGB
+  </a>
+  <ul class="flex gap-7 list-none">
+    {links.map(link => (
+      <li>
+        <a href={link.href}
+           class="font-bebas text-xl text-brand-cream tracking-widest hover:text-brand-yellow transition-colors">
+          {link.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

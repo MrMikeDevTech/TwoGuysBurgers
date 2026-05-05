@@ -1,0 +1,75 @@
+---
+// src/components/Footer.astro
+const horario = [
+  { dias: 'Lun–Vie', horas: '12:00 – 23:00' },
+  { dias: 'Sáb–Dom', horas: '11:00 – 00:00' },
+]
+const menu = ['Burgers', 'Papas & Extras', 'Malteadas', 'Combos']
+---
+
+<footer id="footer" class="bg-brand-black text-brand-cream px-[5vw] pt-16 pb-8 relative overflow-hidden">
+  
+  <!-- Marca de agua -->
+  <span class="absolute right-[-40px] bottom-[-60px] font-bebas text-[22rem] leading-none pointer-events-none select-none"
+        style="color: rgba(255,214,0,0.04)">
+    TGB
+  </span>
+
+  <div class="relative flex flex-wrap gap-10 justify-between">
+    
+    <!-- Brand -->
+    <div>
+      <p class="font-bebas text-5xl text-brand-red leading-none"
+         style="text-shadow: 3px 3px 0 #FFD600">
+        TwoGuys<br>Burger
+      </p>
+      <p class="font-vt text-xl text-gray-500 mt-2">Est. 1994 · Sin parar.</p>
+    </div>
+
+    <!-- Horario -->
+    <div>
+      <h4 class="font-marker text-brand-yellow tracking-[4px] mb-3"
+          style="text-shadow: 2px 2px 0 #E8192C">Horario</h4>
+      {horario.map(h => (
+        <p class="font-vt text-xl text-gray-400">{h.dias}: {h.horas}</p>
+      ))}
+    </div>
+
+    <!-- Contacto -->
+    <div>
+      <h4 class="font-marker text-brand-yellow tracking-[4px] mb-3"
+          style="text-shadow: 2px 2px 0 #E8192C">Encuéntranos</h4>
+      <p class="font-vt text-xl text-gray-400">Av. Burger 1994, Local 2</p>
+      <p class="font-vt text-xl text-gray-400">Tel: (555) TWO-GUYS</p>
+      <a href="#" class="font-vt text-xl text-gray-400 hover:text-brand-yellow transition-colors">
+        @twoguys.burger
+      </a>
+    </div>
+
+    <!-- Menú links -->
+    <div>
+      <h4 class="font-marker text-brand-yellow tracking-[4px] mb-3"
+          style="text-shadow: 2px 2px 0 #E8192C">Menú</h4>
+      {menu.map(item => (
+        <a href="#" class="font-vt text-xl text-gray-400 hover:text-brand-yellow transition-colors block">
+          {item}
+        </a>
+      ))}
+    </div>
+
+  </div>
+
+  <!-- Bottom -->
+  <div class="relative mt-12 border-t-2 border-gray-800 pt-5 flex flex-wrap justify-between gap-3">
+    <p class="font-vt text-lg text-gray-600">
+      © 1994–2026 TwoGuysBurger. Todos los derechos, igual que las salsas, reservados.
+    </p>
+  </div>
+</footer>
+
+<!-- Botón flotante -->
+<a href="#menu"
+   class="fixed bottom-8 right-8 z-50 font-bebas text-xl tracking-widest bg-brand-red text-brand-yellow px-7 py-4 border-4 border-brand-black transition-all hover:-translate-x-1 hover:-translate-y-1 animate-[slideup_0.6s_cubic-bezier(.22,1,.36,1)_1.5s_both]"
+   style="box-shadow: 6px 6px 0 #0A0A0A; animation-delay: 1.5s">
+  🍔 PEDIR YA
+</a>

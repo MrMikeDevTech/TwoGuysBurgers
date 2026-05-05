@@ -1,17 +1,20 @@
 ---
-import "../styles/global.css";
+import BaseLayout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Ticker from '../components/Ticker.astro';
+import Hero from '../components/Hero.astro';
+import MenuSection from '../components/MenuSection.astro';
+import Specials from '../components/Specials.astro';
+import About from '../components/About.astro';
+import Footer from '../components/Footer.astro';
 ---
 
-<html lang="es">
-    <head>
-        <meta charset="utf-8" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="icon" href="/favicon.ico" />
-        <meta name="viewport" content="width=device-width" />
-        <title>Two GuysBurger</title>
-    </head>
-    <body>
-        <h1>Two GuysBurger</h1>
-        <button class="rounded-lg bg-blue-500 px-4 py-2">Primary</button>
-    </body>
-</html>
+<BaseLayout>
+  <Navbar />
+  <Ticker />
+  <Hero />
+  <MenuSection />
+  <Specials />
+  <About />
+  <Footer />
+</BaseLayout>

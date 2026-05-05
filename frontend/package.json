@@ -12,11 +12,11 @@
     },
     "dependencies": {
         "astro": "6.2.2",
-        "tailwindcss": "4.2.4"
+        "tailwindcss": "^4.2.4"
     },
     "devDependencies": {
-        "@tailwindcss/vite": "4.2.4",
         "@eslint/js": "10.0.1",
+        "@tailwindcss/vite": "^4.2.4",
         "@types/micromatch": "4.0.10",
         "@types/node": "25.6.0",
         "eslint": "10.3.0",

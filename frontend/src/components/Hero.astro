@@ -1,0 +1,55 @@
+---
+// src/components/Hero.astro
+---
+
+<header class="relative min-h-screen bg-brand-black flex flex-col items-center justify-center overflow-hidden pt-[70px]">
+  
+  <!-- Checkerboard animado -->
+  <div class="absolute inset-0 opacity-20 animate-[bgmove_8s_linear_infinite]"
+    style="background-image: repeating-conic-gradient(#E8192C 0% 25%, transparent 0% 50%); background-size: 60px 60px;">
+  </div>
+
+  <!-- Blob amarillo -->
+  <div class="absolute w-[520px] h-[520px] bg-brand-yellow top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-[splat_3s_ease-in-out_infinite] z-0"
+    style="border-radius: 42% 58% 55% 45% / 48% 52% 48% 52%;">
+  </div>
+
+  <!-- Logo -->
+  <div class="relative z-10 text-center">
+    <p class="font-marker text-brand-teal text-2xl tracking-[8px] uppercase animate-[fadedown_1s_ease_both]"
+       style="text-shadow: 3px 3px 0 #0A0A0A">
+      ☆ The Original ☆
+    </p>
+
+    <h1 class="font-bebas leading-none text-brand-red animate-[slideup_0.8s_cubic-bezier(.22,1,.36,1)_0.2s_both]"
+        style="font-size: clamp(5rem,14vw,11rem); text-shadow: 6px 6px 0 #0A0A0A, -2px -2px 0 #FF6B00; animation-delay: 0.2s">
+      Two<span class="text-brand-cream">Guys</span><br>Burger
+    </h1>
+
+    <p class="font-vt bg-brand-yellow text-brand-black text-xl tracking-[6px] px-4 py-1 inline-block mt-2 border-4 border-brand-black animate-[fadedown_1s_ease_0.5s_both]"
+       style="box-shadow: 4px 4px 0 #0A0A0A; animation-delay: 0.5s">
+      Est. 1994 · Artesanal & Brutal
+    </p>
+  </div>
+
+  <!-- CTAs -->
+  <div class="relative z-10 mt-10 flex flex-wrap gap-5 justify-center animate-[slideup_1s_ease_0.7s_both]"
+       style="animation-delay: 0.7s">
+    <a href="#menu"
+       class="font-bebas text-2xl tracking-widest px-9 py-3 border-4 border-brand-black bg-brand-red text-brand-yellow transition-all hover:-translate-x-1 hover:-translate-y-1"
+       style="box-shadow: 6px 6px 0 #0A0A0A">
+      🍔 Ver Menú
+    </a>
+    <a href="#nosotros"
+       class="font-bebas text-2xl tracking-widest px-9 py-3 border-4 border-brand-black bg-brand-yellow text-brand-black transition-all hover:-translate-x-1 hover:-translate-y-1"
+       style="box-shadow: 6px 6px 0 #0A0A0A">
+      Nuestra Historia
+    </a>
+  </div>
+
+  <!-- Scroll hint -->
+  <p class="absolute bottom-7 left-1/2 font-vt text-brand-yellow text-xl tracking-[4px] animate-[bounce_1.5s_ease_infinite]"
+     style="transform: translateX(-50%)">
+    ▼ SCROLL ▼
+  </p>
+</header>

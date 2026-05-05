@@ -1,0 +1,40 @@
+---
+// src/components/BurgerCard.astro
+import type { Burger } from '../data/burgers'
+const { name, desc, price, emoji, bg, badge } = Astro.props as Burger
+---
+
+<article class="bg-brand-black border-4 border-brand-black overflow-hidden transition-transform hover:-translate-x-1 hover:-translate-y-1"
+         style="box-shadow: 8px 8px 0 #E8192C">
+  
+  <!-- Imagen / emoji -->
+  <div class={`${bg} h-48 flex items-center justify-center text-8xl relative`}>
+    <span>{emoji}</span>
+    {badge && (
+      <span class="absolute top-3 right-3 font-marker text-xs bg-brand-red text-brand-yellow px-3 py-1 border-3 border-brand-black rotate-6"
+            style="box-shadow: 3px 3px 0 #0A0A0A">
+        {badge}
+      </span>
+    )}
+    <!-- Overlay de rayas -->
+    <div class="absolute inset-0 pointer-events-none"
+         style="background: repeating-linear-gradient(-45deg, transparent 0, transparent 10px, rgba(0,0,0,0.06) 10px, rgba(0,0,0,0.06) 20px)">
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="p-5">
+    <h3 class="font-bebas text-3xl text-brand-yellow leading-none">{name}</h3>
+    <p class="font-vt text-lg text-gray-400 my-2 leading-snug">{desc}</p>
+    <div class="flex items-center justify-between mt-3">
+      <span class="font-bebas text-3xl text-brand-red"
+            style="text-shadow: 2px 2px 0 #FFD600">
+        {price}
+      </span>
+      <button class="font-bebas text-lg tracking-wider bg-brand-yellow text-brand-black border-3 border-brand-black px-5 py-2 transition-all hover:-translate-x-0.5 hover:-translate-y-0.5"
+              style="box-shadow: 3px 3px 0 #0A0A0A">
+        PEDIR
+      </button>
+    </div>
+  </div>
+</article>

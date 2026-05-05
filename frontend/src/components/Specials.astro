@@ -1,0 +1,29 @@
+---
+// src/components/Specials.astro
+const specials = [
+  { emoji: '🍟', dia: 'Lunes',   texto: 'Papas gratis'       },
+  { emoji: '🥤', dia: 'Martes',  texto: '2x1 malteadas'      },
+  { emoji: '🍔', dia: 'Miér',    texto: 'Combo familiar -20%' },
+  { emoji: '🔥', dia: 'Viernes', texto: 'Burger del mes'     },
+  { emoji: '🎉', dia: 'Sábado',  texto: 'Happy Hour'         },
+]
+---
+
+<!-- Divider -->
+<div class="h-4" style="background: repeating-linear-gradient(45deg, #E8192C 0px, #E8192C 12px, #FFD600 12px, #FFD600 24px)"></div>
+
+<section class="py-14 px-[5vw] bg-brand-yellow border-y-[5px] border-brand-black text-center">
+  <p class="font-marker text-brand-red tracking-[6px] uppercase mb-2">★ Ofertas semanales</p>
+  <h2 class="font-bebas text-brand-black leading-none"
+      style="font-size: clamp(3rem,7vw,5.5rem); text-shadow: 4px 4px 0 #00B4B4">
+    Especiales
+  </h2>
+  <div class="flex flex-wrap gap-5 justify-center mt-8">
+    {specials.map(s => (
+      <div class="font-bebas text-xl tracking-widest bg-brand-black text-brand-yellow px-7 py-3 border-4 border-brand-black transition-all hover:-translate-x-1 hover:-translate-y-1"
+           style="box-shadow: 5px 5px 0 #E8192C">
+        {s.emoji} {s.dia}: {s.texto}
+      </div>
+    ))}
+  </div>
+</section>

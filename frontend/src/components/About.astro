@@ -1,0 +1,36 @@
+---
+// src/components/About.astro
+const tags = ['Desde 1994', 'Sin franquicia', 'Carne fresca', 'Pan artesanal', 'Free refills']
+---
+
+<section id="nosotros" class="py-20 px-[5vw] bg-brand-red flex flex-wrap items-center gap-16">
+  
+  <!-- Texto -->
+  <div class="flex-1 min-w-[300px]">
+    <p class="font-marker text-brand-yellow tracking-[6px] uppercase mb-2">★ Quiénes somos</p>
+    <h2 class="font-bebas text-brand-yellow leading-none mb-6"
+        style="font-size: clamp(3rem,7vw,5.5rem); text-shadow: 4px 4px 0 #0A0A0A">
+      Dos guys.<br>Una misión.
+    </h2>
+    <p class="font-vt text-2xl text-brand-cream leading-relaxed max-w-xl">
+      Todo empezó en 1994 cuando Carlos y Memo apostaron quién hacía la mejor burger del barrio.
+      Nadie ganó. Todos perdieron la cabeza.
+      Abrimos con $200 dólares, un asador prestado y una receta que le robamos a la abuela de uno de los dos.
+      Tres décadas después, seguimos igual de locos — solo que con mejores papas.
+    </p>
+    <div class="flex flex-wrap gap-3 mt-6">
+      {tags.map(tag => (
+        <span class="font-marker text-sm text-brand-yellow bg-brand-black border-3 border-brand-yellow px-4 py-1 tracking-widest">
+          {tag}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <!-- Emoji decorativo -->
+  <div class="text-[10rem] leading-none animate-[wobble_2.5s_ease-in-out_infinite]"
+       style="filter: drop-shadow(8px 8px 0 #0A0A0A)">
+    🍔
+  </div>
+
+</section>

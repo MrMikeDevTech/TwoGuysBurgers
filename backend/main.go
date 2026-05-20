@@ -28,6 +28,7 @@ func main() {
 
 	mux.HandleFunc("/ingredients", handlers.IngredientsHandler)
 	mux.HandleFunc("/ingredients/{id}", handlers.IngredientHandler)
+	mux.HandleFunc("/recipes", handlers.RecipesHandler)
 
 	log.Println("servidor corriendo en :8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))

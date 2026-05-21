@@ -21,6 +21,8 @@ func OrdersHandler(w http.ResponseWriter, r *http.Request) {
 		getOrders(w, r)
 	case http.MethodPost:
 		createOrder(w, r)
+	default:
+		http.Error(w, "método no permitido", http.StatusMethodNotAllowed)
 	}
 }
 

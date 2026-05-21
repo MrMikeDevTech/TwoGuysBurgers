@@ -7,9 +7,14 @@ import (
 
 	"twoGuysBurgers/db"
 	"twoGuysBurgers/handlers"
+	"twoGuysBurgers/middleware"
 
 	"github.com/joho/godotenv"
 )
+
+func protected(h http.HandlerFunc) http.Handler {
+	return middleware.AuthMiddleware(http.HandlerFunc(h))
+}
 
 func main() {
 	if err := godotenv.Load(); err != nil {
@@ -27,13 +32,14 @@ func main() {
 	db.ConnectSupabase()
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/ingredients", handlers.IngredientsHandler)
-	mux.HandleFunc("/ingredients/{id}", handlers.IngredientHandler)
-	mux.HandleFunc("/recipes", handlers.RecipesHandler)
-	mux.HandleFunc("/recipe/{id}", handlers.RecipeHandler)
-	mux.HandleFunc("/recipe", handlers.RecipeHandler)
-	mux.HandleFunc("/orders", handlers.OrdersHandler)
-	mux.HandleFunc("/orders/{id}", handlers.OrderHandler)
+	mux.Handle("/ingredients", protected(handlers.IngredientsHandler))
+	mux.Handle("/ingredients/{id}", protected(handlers.IngredientHandler))
+	mux.Handle("/recipes", protected(handlers.RecipesHandler))
+	mux.Handle("/recipes/{id}", protected(handlers.RecipeHandler))
+	mux.Handle("/orders", protected(handlers.OrdersHandler))
+	mux.Handle("/orders/{id}", protected(handlers.OrderHandler))
+	mux.HandleFunc("/auth/is-admin", handlers.AuthHandler)
+	mux.Handle("/auth/role/{user_id}", protected(handlers.AuthRoleHandler))
 
 	log.Println("servidor corriendo en :8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))

@@ -109,6 +109,27 @@ func createIngredient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if newIngredient.Name == "" {
+		http.Error(w, "el nombre del ingrediente no puede estar vacío", http.StatusBadRequest)
+		log.Println("el nombre del ingrediente no puede estar vacío")
+		return
+	}
+	if newIngredient.Unit == "" {
+		http.Error(w, "la unidad del ingrediente no puede estar vacía", http.StatusBadRequest)
+		log.Println("la unidad del ingrediente no puede estar vacía")
+		return
+	}
+	if newIngredient.UnitPrice < 0 {
+		http.Error(w, "el precio unitario no puede ser negativo", http.StatusBadRequest)
+		log.Println("el precio unitario no puede ser negativo")
+		return
+	}
+	if newIngredient.Stock < 0 {
+		http.Error(w, "el stock no puede ser negativo", http.StatusBadRequest)
+		log.Println("el stock no puede ser negativo")
+		return
+	}
+
 	newIngredient.ID = primitive.NewObjectID()
 
 	collection := db.GetCollection("ingredients")
@@ -142,6 +163,27 @@ func updateIngredient(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&updateIngredient); err != nil {
 		http.Error(w, "request malformada", http.StatusBadRequest)
 		log.Println("error al decodificar actualización de ingrediente:", err)
+		return
+	}
+
+	if updateIngredient.Name != nil && *updateIngredient.Name == "" {
+		http.Error(w, "el nombre del ingrediente no puede estar vacío", http.StatusBadRequest)
+		log.Println("el nombre del ingrediente no puede estar vacío")
+		return
+	}
+	if updateIngredient.Unit != nil && *updateIngredient.Unit == "" {
+		http.Error(w, "la unidad del ingrediente no puede estar vacía", http.StatusBadRequest)
+		log.Println("la unidad del ingrediente no puede estar vacía")
+		return
+	}
+	if updateIngredient.UnitPrice != nil && *updateIngredient.UnitPrice < 0 {
+		http.Error(w, "el precio unitario no puede ser negativo", http.StatusBadRequest)
+		log.Println("el precio unitario no puede ser negativo")
+		return
+	}
+	if updateIngredient.Stock != nil && *updateIngredient.Stock < 0 {
+		http.Error(w, "el stock no puede ser negativo", http.StatusBadRequest)
+		log.Println("el stock no puede ser negativo")
 		return
 	}
 

@@ -95,6 +95,11 @@ func getRecipe(w http.ResponseWriter, r *http.Request) {
 		log.Println("error interno", err)
 		return
 	}
+
+	log.Printf("receta con id %s encontrada", path_id)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(recipe)
 }
 
 func createRecipe(w http.ResponseWriter, r *http.Request) {
@@ -105,6 +110,22 @@ func createRecipe(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&newRecipe); err != nil {
 		http.Error(w, "request malformada", http.StatusBadRequest)
 		log.Println("error al decodificar receta:", err)
+		return
+	}
+
+	if newRecipe.Name == "" {
+		http.Error(w, "el nombre de la receta no puede estar vacío", http.StatusBadRequest)
+		log.Println("el nombre de la receta no puede estar vacío")
+		return
+	}
+	if newRecipe.Price <= 0 {
+		http.Error(w, "el precio de la receta debe ser mayor a 0", http.StatusBadRequest)
+		log.Println("el precio de la receta debe ser mayor a 0")
+		return
+	}
+	if len(newRecipe.Ingredients) == 0 {
+		http.Error(w, "la receta debe tener al menos un ingrediente", http.StatusBadRequest)
+		log.Println("la receta debe tener al menos un ingrediente")
 		return
 	}
 
@@ -141,6 +162,22 @@ func updateRecipe(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&updateData); err != nil {
 		http.Error(w, "request malformada", http.StatusBadRequest)
 		log.Println("error al decodificar actualización de receta:", err)
+		return
+	}
+
+	if updateData.Name != nil && *updateData.Name == "" {
+		http.Error(w, "el nombre de la receta no puede estar vacío", http.StatusBadRequest)
+		log.Println("el nombre de la receta no puede estar vacío")
+		return
+	}
+	if updateData.Price != nil && *updateData.Price <= 0 {
+		http.Error(w, "el precio de la receta debe ser mayor a 0", http.StatusBadRequest)
+		log.Println("el precio de la receta debe ser mayor a 0")
+		return
+	}
+	if updateData.Ingredients != nil && len(*updateData.Ingredients) == 0 {
+		http.Error(w, "la receta debe tener al menos un ingrediente", http.StatusBadRequest)
+		log.Println("la receta debe tener al menos un ingrediente")
 		return
 	}
 

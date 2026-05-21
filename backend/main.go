@@ -24,11 +24,16 @@ func main() {
 	}
 
 	db.Connect(uri, dbName)
+	db.ConnectSupabase()
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/ingredients", handlers.IngredientsHandler)
 	mux.HandleFunc("/ingredients/{id}", handlers.IngredientHandler)
 	mux.HandleFunc("/recipes", handlers.RecipesHandler)
+	mux.HandleFunc("/recipe/{id}", handlers.RecipeHandler)
+	mux.HandleFunc("/recipe", handlers.RecipeHandler)
+	mux.HandleFunc("/orders", handlers.OrdersHandler)
+	mux.HandleFunc("/orders/{id}", handlers.OrderHandler)
 
 	log.Println("servidor corriendo en :8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))

@@ -20,6 +20,7 @@ type RecipeOrder struct {
 
 type Order struct {
 	ID           primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	CustomerName string             `bson:"customer_name" json:"customer_name"`
 	Status       OrderStatus        `bson:"status" json:"status"`
 	TotalPrice   float64            `bson:"total_price" json:"total_price"`
 	RecipeOrders []RecipeOrder      `bson:"recipe_orders" json:"recipe_orders"`

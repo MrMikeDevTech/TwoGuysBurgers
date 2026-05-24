@@ -64,7 +64,9 @@ func createOrder(w http.ResponseWriter, r *http.Request) {
 
 	orderCollection := db.GetCollection("orders")
 	recipeCollection := db.GetCollection("recipes")
+	ingredientCollection := db.GetCollection("ingredients")
 
+	totalNeeded := make(map[primitive.ObjectID]int)
 	var totalPrice float64
 	var recipeOrders []models.RecipeOrder
 
@@ -80,9 +82,7 @@ func createOrder(w http.ResponseWriter, r *http.Request) {
 		result := recipeCollection.FindOne(ctx, bson.M{"_id": id})
 		if err := result.Decode(&recipe); err != nil {
 			if err == mongo.ErrNoDocuments {
-				http.Error(
-					w, fmt.Sprintf("receta con id %s no encontrado", id), http.StatusNotFound,
-				)
+				http.Error(w, fmt.Sprintf("receta con id %s no encontrado", id), http.StatusNotFound)
 				log.Println(fmt.Sprintf("receta con id %s no encontrado:", id), err)
 				return
 			}
@@ -91,10 +91,31 @@ func createOrder(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		for _, ingAm := range recipe.Ingredients {
+			totalNeeded[ingAm.IngredientID] += ingAm.Amount * recipeAmount.Amount
+		}
+
 		totalPrice += recipe.Price * float64(recipeAmount.Amount)
-		recipeOrders = append(
-			recipeOrders, models.RecipeOrder{RecipeID: id, Amount: recipeAmount.Amount},
-		)
+		recipeOrders = append(recipeOrders, models.RecipeOrder{RecipeID: id, Amount: recipeAmount.Amount})
+	}
+
+	for ingID, needed := range totalNeeded {
+		var ingredient models.Ingredient
+		if err := ingredientCollection.FindOne(ctx, bson.M{"_id": ingID}).Decode(&ingredient); err != nil {
+			if err == mongo.ErrNoDocuments {
+				http.Error(w, fmt.Sprintf("ingrediente con id %s no encontrado", ingID.Hex()), http.StatusNotFound)
+				log.Printf("ingrediente con id %s no encontrado:", ingID.Hex())
+				return
+			}
+			http.Error(w, "error interno", http.StatusInternalServerError)
+			log.Println("error interno", err)
+			return
+		}
+		if ingredient.Stock < needed {
+			http.Error(w, fmt.Sprintf("no hay suficiente %s para este pedido (necesitado: %d, disponible: %d)", ingredient.Name, needed, ingredient.Stock), http.StatusBadRequest)
+			log.Println("no hay suficientes ingredientes")
+			return
+		}
 	}
 
 	newOrder := models.Order{
@@ -110,6 +131,12 @@ func createOrder(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error al crear orden", http.StatusInternalServerError)
 		log.Println("error al insertar orden:", err)
 		return
+	}
+
+	for ingID, needed := range totalNeeded {
+		if _, err := ingredientCollection.UpdateOne(ctx, bson.M{"_id": ingID}, bson.D{{Key: "$inc", Value: bson.E{Key: "stock", Value: -needed}}}); err != nil {
+			log.Printf("error al decrementar stock del ingrediente %s: %v", ingID.Hex(), err)
+		}
 	}
 
 	log.Printf("receta creada con id %s", newOrder.ID.Hex())

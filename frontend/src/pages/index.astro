@@ -1,17 +1,28 @@
 ---
-import "../styles/global.css";
+import About from "@/components/About.astro";
+import History from "@/components/History.astro";
+import Layout from "@/layouts/Layout.astro";
+import Hero from "@/components/Hero.astro";
+import InfoSection from "@/components/InfoSection.astro";
+import Separator from "@/components/Separator.astro";
+import Ticker from "@/components/Ticker.astro";
 ---
 
-<html lang="es">
-    <head>
-        <meta charset="utf-8" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="icon" href="/favicon.ico" />
-        <meta name="viewport" content="width=device-width" />
-        <title>Two GuysBurger</title>
-    </head>
-    <body>
-        <h1>Two GuysBurger</h1>
-        <button class="rounded-lg bg-blue-500 px-4 py-2">Primary</button>
-    </body>
-</html>
+<Layout>
+    <Ticker />
+    <Hero />
+
+    <Separator />
+
+    <InfoSection />
+
+    <Separator />
+
+    <About />
+
+    <Separator />
+
+    <History />
+
+    <Separator />
+</Layout>

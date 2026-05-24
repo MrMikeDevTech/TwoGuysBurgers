@@ -1,0 +1,60 @@
+---
+interface Props {
+    user: import("@supabase/supabase-js").User;
+}
+
+const { user } = Astro.props;
+const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
+const fullName = user.user_metadata?.full_name;
+---
+
+<div class="group relative flex items-center">
+    <div class="cursor-pointer">
+        <img
+            src={avatarUrl}
+            alt={fullName}
+            class="border-brand-yellow h-10 w-10 rounded-full border-2 transition-transform hover:scale-105"
+        />
+    </div>
+
+    <div
+        class="bg-brand-black border-brand-yellow invisible absolute top-full right-0 mt-2 min-w-[160px] border-2 opacity-0 transition-all group-hover:visible group-hover:opacity-100"
+    >
+        <div class="border-brand-yellow border-b px-4 py-2">
+            <p class="font-bebas text-brand-yellow truncate text-sm">Hola,</p>
+            <p class="font-bebas text-brand-cream truncate text-lg leading-tight">{fullName}</p>
+        </div>
+
+        <ul class="flex list-none flex-col p-0">
+            <li>
+                <a
+                    href="/admin"
+                    class="font-bebas text-brand-cream hover:bg-brand-yellow hover:text-brand-black block px-4 py-2 text-lg transition-colors"
+                >
+                    Admin
+                </a>
+            </li>
+            <li>
+                <form action="/api/auth/signout" method="POST" class="m-0">
+                    <button
+                        type="submit"
+                        class="font-bebas text-brand-red hover:bg-brand-red hover:text-brand-cream block w-full cursor-pointer border-none bg-transparent px-4 py-2 text-left text-lg uppercase transition-colors"
+                    >
+                        Salir
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    .group::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 100%;
+        height: 10px;
+    }
+</style>

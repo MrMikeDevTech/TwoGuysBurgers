@@ -1,0 +1,317 @@
+<div
+    id="music-player-container"
+    class="bg-brand-black border-brand-yellow fixed right-8 bottom-8 z-40 flex h-16 max-w-[500px] animate-[slideup_0.6s_cubic-bezier(.22,1,.36,1)_1.5s_both] items-center gap-4 border-2 px-4 py-2 shadow-[6px_6px_0_#0A0A0A] transition-all duration-500"
+    style="animation-delay: 1.5s"
+    transition:persist="music-player"
+>
+    <div
+        id="song-info"
+        class="text-brand-yellow font-vt hidden max-w-[150px] flex-col overflow-hidden whitespace-nowrap md:max-w-[200px]"
+    >
+        <span class="text-[10px] tracking-widest uppercase opacity-70">Reproduciendo</span>
+        <div class="overflow-hidden">
+            <span id="current-song-name" class="animate-marquee inline-block text-sm">Sin canciones</span>
+        </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+        <button
+            id="music-prev"
+            class="text-brand-yellow hidden transition-all hover:scale-110 active:scale-95"
+            aria-label="Canción anterior"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg
+            >
+        </button>
+
+        <button
+            id="music-toggle"
+            class="bg-brand-red text-brand-yellow flex h-10 w-10 items-center justify-center rounded-full shadow-[2px_2px_0_#000] transition-all hover:scale-110 active:scale-95"
+            aria-label="Reproducir música"
+        >
+            <div id="play-icon" class="ml-1">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg
+                >
+            </div>
+            <div id="pause-icon" class="hidden">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg
+                >
+            </div>
+        </button>
+
+        <button
+            id="music-next"
+            class="text-brand-yellow hidden transition-all hover:scale-110 active:scale-95"
+            aria-label="Siguiente canción"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg
+            >
+        </button>
+    </div>
+
+    <div id="volume-container" class="hidden items-center gap-2 border-l border-white/20 pl-4 transition-all">
+        <input
+            type="range"
+            id="volume-control"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.25"
+            class="volume-slider h-1 w-16 cursor-pointer appearance-none bg-gray-700 md:w-20"
+            style="--value: 25%;"
+        />
+    </div>
+
+    <audio id="bg-music"></audio>
+</div>
+
+<style>
+    .animate-marquee {
+        display: inline-block;
+        padding-left: 100%;
+        animation: marquee 10s linear infinite;
+    }
+
+    @keyframes marquee {
+        0% {
+            transform: translate(0, 0);
+        }
+        100% {
+            transform: translate(-100%, 0);
+        }
+    }
+
+    @keyframes slideup {
+        from {
+            transform: translateY(100px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .volume-slider {
+        background: linear-gradient(to right, #ffd700 0%, #ffd700 var(--value), #4b5563 var(--value), #4b5563 100%);
+        border-radius: 999px;
+    }
+
+    .volume-slider::-webkit-slider-runnable-track {
+        height: 4px;
+    }
+    .volume-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ffd700;
+        margin-top: -4px;
+        cursor: pointer;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+    }
+</style>
+
+<script>
+    import { playlist } from "@/data/playlist";
+
+    declare global {
+        // eslint-disable-next-line no-unused-vars
+        interface Window {
+            playerState: {
+                isPlaying: boolean;
+                hasInteracted: boolean;
+                currentSongIndex: number;
+                shuffledIndices: number[];
+            };
+        }
+    }
+
+    function initPlayer() {
+        const container = document.getElementById("music-player-container");
+        if (!container) return;
+
+        const musicToggle = document.getElementById("music-toggle");
+        const musicPrev = document.getElementById("music-prev");
+        const musicNext = document.getElementById("music-next");
+        const audio = document.getElementById("bg-music") as HTMLAudioElement;
+        const playIcon = document.getElementById("play-icon");
+        const pauseIcon = document.getElementById("pause-icon");
+        const songInfo = document.getElementById("song-info");
+        const volumeControl = document.getElementById("volume-control") as HTMLInputElement;
+        const volumeContainer = document.getElementById("volume-container");
+        const songNameDisplay = document.getElementById("current-song-name");
+
+        if (!window.playerState) {
+            window.playerState = {
+                isPlaying: false,
+                hasInteracted: false,
+                currentSongIndex: 0,
+                shuffledIndices: []
+            };
+
+            const indices = Array.from({ length: playlist.length }, (_, i) => i);
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            window.playerState.shuffledIndices = indices;
+        }
+
+        const state = window.playerState;
+
+        function updatePlayState(playing: boolean) {
+            state.isPlaying = playing;
+            if (playing) {
+                playIcon?.classList.add("hidden");
+                pauseIcon?.classList.remove("hidden");
+            } else {
+                playIcon?.classList.remove("hidden");
+                pauseIcon?.classList.add("hidden");
+            }
+        }
+
+        function showControls() {
+            if (state.hasInteracted) {
+                songInfo?.classList.remove("hidden");
+                songInfo?.classList.add("flex");
+                musicPrev?.classList.remove("hidden");
+                musicNext?.classList.remove("hidden");
+                volumeContainer?.classList.remove("hidden");
+                volumeContainer?.classList.add("flex");
+                container?.style.setProperty("animation-delay", "0s");
+            }
+        }
+
+        function updateSong() {
+            if (playlist.length > 0 && audio) {
+                const songIndex = state.shuffledIndices[state.currentSongIndex];
+                const song = playlist[songIndex];
+                if (audio.src.indexOf(song.file) === -1) {
+                    audio.src = `/music/${song.file}`;
+                }
+                audio.volume = parseFloat(volumeControl?.value || "0.25");
+                if (songNameDisplay) songNameDisplay.textContent = song.name;
+            }
+        }
+
+        function playNext() {
+            state.currentSongIndex = (state.currentSongIndex + 1) % playlist.length;
+            updateSong();
+            audio
+                ?.play()
+                .then(() => updatePlayState(true))
+                .catch(console.error);
+            state.hasInteracted = true;
+            showControls();
+        }
+
+        function playPrev() {
+            state.currentSongIndex = (state.currentSongIndex - 1 + playlist.length) % playlist.length;
+            updateSong();
+            audio
+                ?.play()
+                .then(() => updatePlayState(true))
+                .catch(console.error);
+            state.hasInteracted = true;
+            showControls();
+        }
+
+        if (container.hasAttribute("data-initialized")) {
+            showControls();
+            updatePlayState(state.isPlaying);
+            if (playlist.length > 0) {
+                const songIndex = state.shuffledIndices[state.currentSongIndex];
+                if (songNameDisplay) songNameDisplay.textContent = playlist[songIndex].name;
+            }
+            return;
+        }
+
+        musicToggle?.addEventListener("click", () => {
+            if (playlist.length === 0) return;
+            if (!audio?.src) updateSong();
+            state.hasInteracted = true;
+            showControls();
+            if (state.isPlaying) {
+                audio?.pause();
+                updatePlayState(false);
+            } else {
+                audio
+                    ?.play()
+                    .then(() => updatePlayState(true))
+                    .catch(console.error);
+            }
+        });
+
+        musicNext?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (playlist.length === 0) return;
+            playNext();
+        });
+
+        musicPrev?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (playlist.length === 0) return;
+            playPrev();
+        });
+
+        volumeControl?.addEventListener("input", (e) => {
+            const val = (e.target as HTMLInputElement).value;
+            const percent = Math.round(parseFloat(val) * 100);
+            if (audio) audio.volume = parseFloat(val);
+            volumeControl?.style.setProperty("--value", `${percent}%`);
+        });
+
+        audio?.addEventListener("ended", () => {
+            playNext();
+        });
+
+        volumeControl?.style.setProperty("--value", `${Math.round(parseFloat(volumeControl.value) * 100)}%`);
+        container.setAttribute("data-initialized", "true");
+    }
+
+    document.addEventListener("astro:page-load", initPlayer);
+</script>

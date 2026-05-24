@@ -1,0 +1,156 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { burgers, compartibles, combos, ingredients } from "@/data/products";
+import { AddToCart } from "@/components/AddToCart";
+
+const { productId } = Astro.params;
+
+const slugify = (text: string) =>
+    text
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^\w-]+/g, "");
+
+const allProducts = [...burgers, ...compartibles, ...combos];
+const product = allProducts.find((b) => slugify(b.name) === productId);
+const slug = productId;
+
+if (!product) {
+    return Astro.redirect("/");
+}
+
+let displayIngredients: any[] = [];
+if ("ingredients" in product) {
+    displayIngredients = product.ingredients.map((item) => {
+        const ingredient = ingredients.find((i) => i.id === item.id);
+        return { ...ingredient, quantity: item.quantity };
+    });
+} else if ("products" in product) {
+    displayIngredients = product.products.map((item) => {
+        const recipe = allProducts.find((r) => r.id === item.recipeId);
+        return { ...recipe, quantity: item.amount, isRecipe: true };
+    });
+}
+---
+
+<Layout title={`Two Guys Burger - ${product.name}`}>
+    <main class="text-brand-black min-h-screen bg-white pt-32 pb-12">
+        <div class="container mx-auto max-w-5xl px-4">
+            <div class="font-vt mb-8 text-lg text-gray-500">
+                <a href="/" class="hover:text-brand-red transition-colors">Inicio</a>
+                <span class="mx-2">&gt;</span>
+                <span class="text-brand-red">{product.name}</span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-12 lg:grid-cols-2">
+                <div
+                    class="border-brand-black bg-brand-yellow relative h-[400px] border-4 lg:h-[500px]"
+                    style="box-shadow: 12px 12px 0 #E8192C"
+                >
+                    <div
+                        class="pointer-events-none absolute inset-0 z-20"
+                        style="background: repeating-linear-gradient(-45deg, transparent 0, transparent 10px, rgba(0,0,0,0.06) 10px, rgba(0,0,0,0.06) 20px)"
+                    >
+                    </div>
+                    <img
+                        src={product.img}
+                        alt={product.name}
+                        class="relative z-10 h-full w-full object-cover"
+                        transition:name={`img-${slug}`}
+                    />
+
+                    <div
+                        class="font-bebas bg-brand-black text-brand-yellow border-brand-yellow absolute -top-6 -right-6 z-30 rotate-12 border-4 px-6 py-2 text-4xl"
+                        style="box-shadow: 4px 4px 0 #E8192C"
+                    >
+                        ${product.price}
+                    </div>
+                </div>
+
+                <div class="relative flex flex-col justify-center p-2">
+                    <div class="pl-0 lg:pl-10">
+                        <h1
+                            class="font-bebas text-brand-red mb-4 text-6xl leading-none md:text-7xl"
+                            transition:name={`name-${slug}`}
+                            style="text-shadow: 3px 3px 0 #0A0A0A"
+                        >
+                            {product.name}
+                        </h1>
+                        <p class="font-vt text-brand-black mb-10 text-2xl leading-relaxed">{product.description}</p>
+
+                        <AddToCart
+                            client:load
+                            id={`${product.id}`}
+                            name={product.name}
+                            price={product.price}
+                            img={product.img}
+                        />
+
+                        <a
+                            href="/menu"
+                            class="font-bebas text-brand-red hover:text-brand-black mt-10 inline-block text-2xl underline transition-all"
+                        >
+                            Volver al Menú
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {
+                displayIngredients.length > 0 && (
+                    <div class="border-brand-black mt-20 border-t-4 pt-12">
+                        <h2 class="font-bebas text-brand-black mb-8 text-4xl tracking-wider">
+                            {"products" in product ? "LO QUE INCLUYE" : "INGREDIENTES"}
+                        </h2>
+                        <div class="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                            {
+                                displayIngredients.map((item) => {
+                                    const itemSlug = item.isRecipe ? slugify(item.name) : null;
+                                    const itemUrl = item.isRecipe ? `/menu/${itemSlug}` : null;
+                                    const Component = item.isRecipe ? "a" : "div";
+
+                                    return (
+                                        <Component
+                                            href={itemUrl}
+                                            class="border-brand-black group bg-brand-yellow relative flex flex-col items-center border-4 p-4 shadow-[4px_4px_0_#000] transition-transform hover:-translate-y-1 no-underline text-brand-black"
+                                        >
+                                            <div class="border-brand-black relative h-20 w-20 overflow-hidden rounded-full border-2 bg-white p-2">
+                                                <img
+                                                    src={item.img}
+                                                    alt={item.name}
+                                                    class="h-full w-full object-contain"
+                                                    transition:name={item.isRecipe ? `img-${itemSlug}` : undefined}
+                                                />
+                                            </div>
+                                            <span
+                                                class="font-bebas mt-3 text-center text-xl leading-none"
+                                                transition:name={item.isRecipe ? `name-${itemSlug}` : undefined}
+                                            >
+                                                {item.name}
+                                            </span>
+                                            {item.quantity > 1 && (
+                                                <span class="font-vt bg-brand-red border-brand-black absolute -top-2 -right-2 border-2 px-2 py-0.5 text-sm text-white">
+                                                    x{item.quantity}
+                                                </span>
+                                            )}
+                                        </Component>
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
+                )
+            }
+        </div>
+    </main>
+</Layout>
+<style>
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+</style>

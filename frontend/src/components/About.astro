@@ -1,0 +1,42 @@
+---
+const tags = ["Desde 2010", "Sin franquicia", "Carne fresca", "Pan artesanal", "Free refills"];
+---
+
+<section class="bg-brand-red px-[5vw] py-20">
+    <div class="mx-auto flex max-w-7xl flex-col-reverse items-center gap-16 md:flex-row md:gap-20">
+        <div class="flex w-full justify-center md:w-1/2">
+            <div class="relative">
+                <img
+                    src="/landing/twoguys.webp"
+                    alt="Two Guys - Alan y Jonathan"
+                    class="border-brand-black w-full max-w-md rotate-2 rounded-lg border-4 bg-white shadow-[12px_12px_0_#000] transition-transform duration-300 hover:rotate-0 md:max-w-none"
+                />
+            </div>
+        </div>
+
+        <div class="w-full text-center md:w-1/2 md:text-right">
+            <p class="font-marker text-brand-yellow mb-2 tracking-[6px] uppercase">★ Nuestra misión</p>
+            <h2
+                class="font-bebas text-brand-yellow mb-6 leading-none"
+                style="font-size: clamp(3rem,7vw,5.5rem); text-shadow: 4px 4px 0 #0A0A0A"
+            >
+                Dos guys.<br />Una misión.
+            </h2>
+            <p class="font-vt text-brand-cream text-2xl leading-relaxed md:ml-auto md:max-w-xl">
+                Nuestra misión es servir hamburguesas artesanales con un sabor auténtico, preparadas con la misma
+                pasión, dedicación y la receta de la abuela con la que empezamos en 2010. Queremos ofrecer a nuestra
+                gente comida honesta y de calidad en cada mordida, manteniendo siempre vivo ese espíritu joven,
+                descontrolado y sin pretensiones de nuestro primer puesto callejero.
+            </p>
+            <div class="mt-6 flex flex-wrap justify-center gap-3 md:justify-end">
+                {
+                    tags.map((tag) => (
+                        <span class="font-marker text-brand-yellow bg-brand-black border-brand-yellow border-3 px-4 py-1 text-sm tracking-widest">
+                            {tag}
+                        </span>
+                    ))
+                }
+            </div>
+        </div>
+    </div>
+</section>

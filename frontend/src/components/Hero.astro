@@ -1,0 +1,77 @@
+---
+import DinamycBackground from "@/components/DinamycBackground.astro";
+---
+
+<header
+    class="bg-brand-black relative flex min-h-screen flex-col items-center justify-center overflow-hidden pt-[70px]"
+>
+    <DinamycBackground class="absolute" />
+
+    <img
+        src="/hero/alan.webp"
+        alt="Alan"
+        class="animate-fade-in-right absolute bottom-0 -left-10 z-20 h-[35vh] w-auto origin-bottom scale-95 object-cover object-top opacity-50 sm:left-0 sm:h-[60vh] sm:opacity-100 md:h-[80vh] lg:h-screen"
+        style="mask-image: linear-gradient(to top, transparent 0%, black 15%, black 100%);"
+    />
+    <img
+        src="/hero/jona.webp"
+        alt="Jona"
+        class="animate-fade-in-left absolute -right-10 bottom-0 z-20 h-[40vh] w-auto object-cover object-top opacity-50 sm:h-[65vh] sm:opacity-100 md:h-[85vh] lg:h-[110vh] lg:-right-20"
+        style="mask-image: linear-gradient(to top, transparent 0%, black 15%, black 100%);"
+    />
+
+    <div
+        class="bg-brand-yellow animate-splat absolute top-1/2 left-1/2 z-0 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 sm:h-[400px] sm:w-[400px] md:h-[520px] md:w-[520px]"
+        style="border-radius: 42% 58% 55% 45% / 48% 52% 48% 52%;"
+    >
+    </div>
+
+    <div class="relative z-10 text-center">
+        <p
+            class="font-marker text-brand-teal animate-[fadedown_1s_ease_both] text-2xl tracking-[8px] uppercase"
+            style="text-shadow: 3px 3px 0 #0A0A0A"
+        >
+            ☆ The Original ☆
+        </p>
+
+        <h1
+            class="font-bebas text-brand-red animate-[slideup_0.8s_cubic-bezier(.22,1,.36,1)_0.2s_both] leading-none"
+            style="font-size: clamp(5rem,14vw,11rem); text-shadow: 6px 6px 0 #0A0A0A, -2px -2px 0 #FF6B00; animation-delay: 0.2s"
+        >
+            Two<span class="text-brand-cream">Guys</span><br />Burger
+        </h1>
+
+        <p
+            class="font-vt bg-brand-yellow text-brand-black border-brand-black mt-2 inline-block animate-[fadedown_1s_ease_0.5s_both] border-4 px-4 py-1 text-xl tracking-[6px]"
+            style="box-shadow: 4px 4px 0 #0A0A0A; animation-delay: 0.5s"
+        >
+            Est. 2010 · Artesanal & Brutal
+        </p>
+    </div>
+
+    <div
+        class="relative z-10 mt-10 flex animate-[slideup_1s_ease_0.7s_both] flex-wrap justify-center gap-5"
+        style="animation-delay: 0.7s"
+    >
+        <a
+            href="#menu"
+            class="font-bebas border-brand-black bg-brand-red text-brand-yellow border-4 px-9 py-3 text-2xl tracking-widest transition-all hover:-translate-x-1 hover:-translate-y-1"
+            style="box-shadow: 6px 6px 0 #0A0A0A"
+        >
+            🍔 Ver Menú
+        </a>
+        <a
+            href="#nosotros"
+            class="font-bebas border-brand-black bg-brand-yellow text-brand-black border-4 px-9 py-3 text-2xl tracking-widest transition-all hover:-translate-x-1 hover:-translate-y-1"
+            style="box-shadow: 6px 6px 0 #0A0A0A"
+        >
+            Nuestra Historia
+        </a>
+    </div>
+
+    <p
+        class="font-vt text-brand-yellow absolute bottom-7 left-1/2 -translate-x-1/2 animate-[bounce_1.5s_ease_infinite] text-xl tracking-[4px]"
+    >
+        ▼ SCROLL ▼
+    </p>
+</header>

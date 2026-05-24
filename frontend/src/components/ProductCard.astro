@@ -1,0 +1,54 @@
+---
+import type { Recipe } from "@/data/products";
+const { name, description, price, img } = Astro.props as Recipe;
+
+const slugify = (text: string) =>
+    text
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^\w-]+/g, "");
+const slug = slugify(name);
+const detailUrl = `/menu/${slug}`;
+---
+
+<article
+    class="bg-brand-black border-brand-black flex flex-col overflow-hidden border-4 transition-transform hover:-translate-x-1 hover:-translate-y-1"
+    style="box-shadow: 8px 8px 0 #E8192C"
+>
+    <a href={detailUrl} class="border-brand-black block border-b-4">
+        <div class="bg-brand-yellow relative flex h-56 items-center justify-center overflow-hidden">
+            <img
+                src={img}
+                alt={name}
+                class="relative z-10 h-full w-full object-cover"
+                transition:name={`img-${slug}`}
+            />
+            <div
+                class="pointer-events-none absolute inset-0 z-20"
+                style="background: repeating-linear-gradient(-45deg, transparent 0, transparent 10px, rgba(0,0,0,0.06) 10px, rgba(0,0,0,0.06) 20px)"
+            >
+            </div>
+        </div>
+    </a>
+
+    <div class="flex grow flex-col p-5">
+        <h3 class="font-bebas text-brand-yellow text-3xl leading-none" transition:name={`name-${slug}`}>{name}</h3>
+        <p class="font-vt my-2 line-clamp-3 grow text-lg leading-snug text-gray-400">{description}</p>
+        <div class="mt-4 flex items-center justify-between">
+            <span
+                class="font-bebas text-brand-red text-4xl"
+                style="text-shadow: 2px 2px 0 #FFD600"
+                transition:name={`price-${slug}`}
+            >
+                ${price}
+            </span>
+            <a
+                href={detailUrl}
+                class="font-bebas bg-brand-yellow text-brand-black border-brand-black inline-block border-3 px-5 py-2 text-lg tracking-wider no-underline transition-all hover:-translate-x-0.5 hover:-translate-y-0.5"
+                style="box-shadow: 3px 3px 0 #0A0A0A"
+            >
+                VER DETALLE
+            </a>
+        </div>
+    </div>
+</article>

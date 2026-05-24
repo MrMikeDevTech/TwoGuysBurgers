@@ -1,0 +1,23 @@
+---
+import ProductCard from "@/components/ProductCard.astro";
+import { burgers, compartibles } from "@/data/products";
+---
+
+<section id="menu" class="bg-brand-cream px-[5vw] py-20">
+    <p class="font-marker text-brand-teal mb-2 tracking-[6px] uppercase" style="text-shadow: 2px 2px 0 #0A0A0A">
+        ★ Lo que hacemos mejor
+    </p>
+    <h2
+        class="font-bebas text-brand-black mb-10 leading-none"
+        style="font-size: clamp(3rem,7vw,5.5rem); text-shadow: 4px 4px 0 #E8192C"
+    >
+        El Menú
+    </h2>
+    <div class="my-5 grid gap-7" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))">
+        {burgers.map((burger) => <ProductCard {...burger} />)}
+    </div>
+
+    <div class="my-5 grid gap-7" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))">
+        {compartibles.map((item) => <ProductCard {...item} />)}
+    </div>
+</section>

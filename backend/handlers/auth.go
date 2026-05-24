@@ -1,15 +1,19 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"twoGuysBurgers/db"
+	"twoGuysBurgers/models"
 
-	"github.com/google/uuid"
-	"github.com/supabase-community/gotrue-go/types"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func AuthHandler(w http.ResponseWriter, r *http.Request) {
@@ -20,62 +24,92 @@ func AuthHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func AuthRoleHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodPut {
-		setRole(w, r)
-	} else {
+func AdminHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		addAdmin(w, r)
+	case http.MethodDelete:
+		removeAdmin(w, r)
+	default:
 		http.Error(w, "método no permitido", http.StatusMethodNotAllowed)
 	}
 }
 
-func setRole(w http.ResponseWriter, r *http.Request) {
-	authHeader := r.Header.Get("Authorization")
+func addAdmin(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
-		http.Error(w, "autorización requerida", http.StatusUnauthorized)
+	email := r.PathValue("email")
+
+	if email == "" {
+		http.Error(w, "el email del usuario no puede estar vacío", http.StatusBadRequest)
+		log.Println("el email del usuario no puede estar vacío")
 		return
 	}
 
-	token := strings.TrimPrefix(authHeader, "Bearer ")
-	user_id, err := uuid.Parse(r.PathValue("user_id"))
+	collection := db.GetCollection("admins")
 
+	var existing models.Admin
+	if err := collection.FindOne(ctx, bson.M{"email": email}).Decode(&existing); err == nil {
+		http.Error(w, "el admin ya existe", http.StatusConflict)
+		log.Printf("admin con email %s ya existe", email)
+		return
+	}
+
+	newAdmin := models.Admin{
+		ID:    primitive.NewObjectID(),
+		Email: email,
+	}
+
+	if _, err := collection.InsertOne(ctx, newAdmin); err != nil {
+		http.Error(w, "error al añadir admin", http.StatusInternalServerError)
+		log.Println("error al añadir admin", err)
+		return
+	}
+
+	log.Printf("admin registrado con id %s", newAdmin.ID.Hex())
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(newAdmin)
+}
+
+func removeAdmin(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	email := r.PathValue("email")
+
+	if email == "" {
+		http.Error(w, "el email del usuario no puede estar vacío", http.StatusBadRequest)
+		log.Println("el email del usuario no puede estar vacío")
+		return
+	}
+
+	collection := db.GetCollection("admins")
+
+	result, err := collection.DeleteOne(ctx, bson.M{"email": email})
 	if err != nil {
-		http.Error(w, "user_id no es un uuid válido", http.StatusNotFound)
-		log.Println("user_id no es un uuid válido", err)
+		http.Error(w, "error al remover admin", http.StatusInternalServerError)
+		log.Printf("error al remover admin con id %s: %v", email, err)
 		return
 	}
 
-	var body map[string]string
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		http.Error(w, "request malformada", http.StatusBadRequest)
-		log.Println("request malformada", err)
+	if result.DeletedCount == 0 {
+		http.Error(w, "admin inexistente", http.StatusNotFound)
+		log.Printf("admin inexistente con email %s: %v", email, err)
 		return
 	}
 
-	role, ok := body["role"]
-	if !ok {
-		http.Error(w, "la request debe contener un campo role", http.StatusBadRequest)
-		log.Println("la request debe contener un campo role", err)
-		return
-	}
-
-	response, err := db.Supabase.Auth.WithToken(token).AdminUpdateUser(types.AdminUpdateUserRequest{
-		UserID:      user_id,
-		AppMetadata: map[string]any{"role": role},
-	})
-
-	if err != nil {
-		http.Error(w, "error al actualizar rol", http.StatusInternalServerError)
-		log.Println("error al actualizar rol", err)
-		return
-	}
-
-	log.Printf("rol del usuario con uuid %s actualizado a %s", user_id, role)
+	log.Printf("admin con email %s borrado", email)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(result.Acknowledged)
 }
 
 func isAdmin(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	authHeader := r.Header.Get("Authorization")
 
 	if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
@@ -92,11 +126,22 @@ func isAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if response.AppMetadata["role"] == "admin" {
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]bool{"is_admin": true})
-	} else {
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]bool{"is_admin": false})
+	collection := db.GetCollection("admins")
+	result := collection.FindOne(ctx, bson.M{"email": response.Email})
+
+	var user models.Admin
+	if err := result.Decode(&user); err != nil {
+		if err == mongo.ErrNoDocuments {
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]bool{"is_admin": false})
+			return
+		} else {
+			http.Error(w, "error interno", http.StatusInternalServerError)
+			log.Println("error interno", err)
+			return
+		}
 	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]bool{"is_admin": true})
 }

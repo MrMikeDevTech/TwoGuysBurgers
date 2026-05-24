@@ -39,7 +39,7 @@ func main() {
 	mux.Handle("/orders", protected(handlers.OrdersHandler))
 	mux.Handle("/orders/{id}", protected(handlers.OrderHandler))
 	mux.HandleFunc("/auth/is-admin", handlers.AuthHandler)
-	mux.Handle("/auth/role/{user_id}", protected(handlers.AuthRoleHandler))
+	mux.Handle("/auth/admins/{email}", protected(handlers.AdminHandler))
 
 	log.Println("servidor corriendo en :8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))

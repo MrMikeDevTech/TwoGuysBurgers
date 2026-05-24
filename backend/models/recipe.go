@@ -2,6 +2,13 @@ package models
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
+type RecipeKind string
+
+const (
+	Product    RecipeKind = "product"
+	Consumable RecipeKind = "consumable"
+)
+
 type IngredientAmount struct {
 	IngredientID primitive.ObjectID `bson:"ingredient_id" json:"ingredient_id"`
 	Amount       int                `bson:"amount" json:"amount"`
@@ -13,4 +20,6 @@ type Recipe struct {
 	Description string             `bson:"description" json:"description"`
 	Price       float64            `bson:"price" json:"price"`
 	Ingredients []IngredientAmount `bson:"ingredients,omitempty" json:"ingredients"`
+	ImageUrl    string             `bson:"image_url" json:"image_url"`
+	RecipeKind  RecipeKind         `bson:"kind" json:"kind"`
 }

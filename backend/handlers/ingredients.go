@@ -203,6 +203,9 @@ func updateIngredient(w http.ResponseWriter, r *http.Request) {
 	if updateIngredient.UnitPrice != nil {
 		preUpdate = append(preUpdate, bson.E{Key: "unit_price", Value: *updateIngredient.UnitPrice})
 	}
+	if updateIngredient.ImageUrl != nil {
+		preUpdate = append(preUpdate, bson.E{Key: "image_url", Value: *updateIngredient.ImageUrl})
+	}
 
 	if len(preUpdate) == 0 {
 		http.Error(w, "no hay campos para actualizar", http.StatusBadRequest)

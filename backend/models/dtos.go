@@ -5,6 +5,7 @@ type UpdateIngredientDTO struct {
 	Stock     *int     `json:"stock"`
 	Unit      *string  `json:"unit"`
 	UnitPrice *float64 `json:"unit_price"`
+	ImageUrl  *string  `json:"image_url"`
 }
 
 type UpdateRecipeDTO struct {
@@ -12,6 +13,8 @@ type UpdateRecipeDTO struct {
 	Description *string             `json:"description"`
 	Price       *float64            `json:"price"`
 	Ingredients *[]IngredientAmount `json:"ingredients"`
+	ImageUrl    *string             `json:"image_url"`
+	RecipeKind  *RecipeKind         `json:"kind"`
 }
 
 type RecipeAmount struct {

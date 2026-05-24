@@ -128,6 +128,11 @@ func createRecipe(w http.ResponseWriter, r *http.Request) {
 		log.Println("la receta debe tener al menos un ingrediente")
 		return
 	}
+	if newRecipe.RecipeKind != models.Product && newRecipe.RecipeKind != models.Consumable {
+		http.Error(w, "el tipo de receta debe ser 'product' o 'consumable'", http.StatusBadRequest)
+		log.Println("tipo de receta inválido:", newRecipe.RecipeKind)
+		return
+	}
 
 	newRecipe.ID = primitive.NewObjectID()
 
@@ -180,6 +185,11 @@ func updateRecipe(w http.ResponseWriter, r *http.Request) {
 		log.Println("la receta debe tener al menos un ingrediente")
 		return
 	}
+	if updateData.RecipeKind != nil && *updateData.RecipeKind != models.Product && *updateData.RecipeKind != models.Consumable {
+		http.Error(w, "el tipo de receta debe ser 'product' o 'consumable'", http.StatusBadRequest)
+		log.Println("tipo de receta inválido:", *updateData.RecipeKind)
+		return
+	}
 
 	collection := db.GetCollection("recipes")
 
@@ -196,6 +206,12 @@ func updateRecipe(w http.ResponseWriter, r *http.Request) {
 	}
 	if updateData.Ingredients != nil {
 		preUpdate = append(preUpdate, bson.E{Key: "ingredients", Value: *updateData.Ingredients})
+	}
+	if updateData.ImageUrl != nil {
+		preUpdate = append(preUpdate, bson.E{Key: "image_url", Value: *updateData.ImageUrl})
+	}
+	if updateData.RecipeKind != nil {
+		preUpdate = append(preUpdate, bson.E{Key: "kind", Value: *updateData.RecipeKind})
 	}
 
 	if len(preUpdate) == 0 {

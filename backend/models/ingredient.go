@@ -8,4 +8,5 @@ type Ingredient struct {
 	Stock     int                `bson:"stock" json:"stock"`
 	Unit      string             `bson:"unit" json:"unit"`
 	UnitPrice float64            `bson:"unit_price" json:"unit_price"`
+	ImageUrl  string             `bson:"image_url" json:"image_url"`
 }

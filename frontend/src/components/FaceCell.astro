@@ -1,0 +1,29 @@
+---
+interface Props {
+  esRojo: boolean;
+  poolName: string;
+  imagenRandom: string;
+  mostrarImagen: boolean;
+}
+
+const { esRojo, poolName, imagenRandom, mostrarImagen } = Astro.props;
+---
+
+<div 
+  class={`w-[60px] h-[60px] relative overflow-hidden flex items-center justify-center ${esRojo ? 'bg-brand-red' : 'bg-black'}`}
+  data-face-cell={mostrarImagen ? "" : null}
+  data-pool={poolName}
+>
+  {mostrarImagen && (
+    <>
+      <img 
+        src={imagenRandom} 
+        alt="Face pattern" 
+        class="w-full h-full object-cover"
+        loading="lazy"
+      />
+      {/* Overlay del 5% para integración de color */}
+      <div class={`absolute inset-0 opacity-5 ${esRojo ? 'bg-brand-red' : 'bg-black'}`}></div>
+    </>
+  )}
+</div>

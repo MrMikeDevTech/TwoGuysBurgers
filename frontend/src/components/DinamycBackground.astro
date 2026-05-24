@@ -1,0 +1,112 @@
+---
+import FaceCell from "./FaceCell.astro";
+
+interface Props {
+    class?: string;
+}
+
+const { class: className } = Astro.props;
+
+const carasAlan = Array.from({ length: 5 }, (_, i) => `/pattern/alan/alan-${i + 1}.webp`);
+const carasJona = Array.from({ length: 5 }, (_, i) => `/pattern/jona/jona-${i + 1}.webp`);
+
+const columnas = 60;
+const filas = 40;
+const celdasTotales = columnas * filas;
+
+const PORCENTAJE_IMAGENES = 0.4;
+
+const visibilidad = new Array(celdasTotales).fill(false);
+const targetPorBloque = PORCENTAJE_IMAGENES * 4;
+const baseImg = Math.floor(targetPorBloque);
+const probExtra = targetPorBloque - baseImg;
+
+for (let r = 0; r < filas; r += 2) {
+    for (let c = 0; c < columnas; c += 2) {
+        const numImg = Math.random() < probExtra ? baseImg + 1 : baseImg;
+        const posiciones = [0, 1, 2, 3];
+        for (let i = 3; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [posiciones[i], posiciones[j]] = [posiciones[j], posiciones[i]];
+        }
+        for (let i = 0; i < numImg; i++) {
+            const pos = posiciones[i];
+            const row = r + Math.floor(pos / 2);
+            const col = c + (pos % 2);
+            if (row < filas && col < columnas) {
+                visibilidad[row * columnas + col] = true;
+            }
+        }
+    }
+}
+---
+
+<div class:list={["pointer-events-none inset-0 z-0 overflow-hidden bg-black opacity-20", className]}>
+    <div
+        class="animate-bg-infinite absolute top-[-60px] left-[-60px] grid"
+        style={`grid-template-columns: repeat(${columnas}, 60px); grid-template-rows: repeat(${filas}, 60px); width: ${columnas * 60}px; height: ${filas * 60}px;`}
+    >
+        {
+            Array.from({ length: celdasTotales }).map((_, i) => {
+                const fila = Math.floor(i / columnas);
+                const columna = i % columnas;
+                const esRojo = (fila + columna) % 2 === 0;
+
+                const pool = esRojo ? carasAlan : carasJona;
+                const poolName = esRojo ? "alan" : "jona";
+                const imagenRandom = pool[Math.floor(Math.random() * pool.length)];
+
+                const mostrarImagen = visibilidad[i];
+
+                return (
+                    <FaceCell
+                        esRojo={esRojo}
+                        poolName={poolName}
+                        imagenRandom={imagenRandom}
+                        mostrarImagen={mostrarImagen}
+                    />
+                );
+            })
+        }
+    </div>
+</div>
+
+<script>
+    const l = 5;
+    const alanPool = Array.from({ length: l }, (_, i) => `/pattern/alan/alan-${i + 1}.webp`);
+    const jonaPool = Array.from({ length: l }, (_, i) => `/pattern/jona/jona-${i + 1}.webp`);
+
+    function initDynamicFaces() {
+        const cells = document.querySelectorAll("[data-face-cell]");
+
+        cells.forEach((cell) => {
+            const img = cell.querySelector("img");
+            if (!img) return;
+
+            const poolName = cell.getAttribute("data-pool");
+            const pool = poolName === "alan" ? alanPool : jonaPool;
+
+            const baseDelay = 1000 + Math.random() * 8000;
+
+            const updateFace = () => {
+                if (Math.random() > 0.85) {
+                    const currentSrc = img.getAttribute("src");
+                    let nextSrc = pool[Math.floor(Math.random() * pool.length)];
+
+                    if (nextSrc === currentSrc && pool.length > 1)
+                        nextSrc = pool.find((src) => src !== currentSrc) || nextSrc;
+
+                    img.src = nextSrc;
+                }
+
+                const nextTick = 500 + Math.random() * baseDelay;
+                setTimeout(updateFace, nextTick);
+            };
+
+            setTimeout(updateFace, Math.random() * 10000);
+        });
+    }
+
+    initDynamicFaces();
+    document.addEventListener("astro:after-swap", initDynamicFaces);
+</script>

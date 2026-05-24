@@ -1,20 +1,28 @@
 ---
-import BaseLayout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
-import Ticker from '../components/Ticker.astro';
-import Hero from '../components/Hero.astro';
-import MenuSection from '../components/MenuSection.astro';
-import Specials from '../components/Specials.astro';
-import About from '../components/About.astro';
-import Footer from '../components/Footer.astro';
+import About from "@/components/About.astro";
+import History from "@/components/History.astro";
+import Layout from "@/layouts/Layout.astro";
+import Hero from "@/components/Hero.astro";
+import InfoSection from "@/components/InfoSection.astro";
+import Separator from "@/components/Separator.astro";
+import Ticker from "@/components/Ticker.astro";
 ---
 
-<BaseLayout>
-  <Navbar />
-  <Ticker />
-  <Hero />
-  <MenuSection />
-  <Specials />
-  <About />
-  <Footer />
-</BaseLayout>
+<Layout>
+    <Ticker />
+    <Hero />
+
+    <Separator />
+
+    <InfoSection />
+
+    <Separator />
+
+    <About />
+
+    <Separator />
+
+    <History />
+
+    <Separator />
+</Layout>

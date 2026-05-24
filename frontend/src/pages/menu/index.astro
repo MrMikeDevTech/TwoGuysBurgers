@@ -1,0 +1,67 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ProductCard from "@/components/ProductCard.astro";
+import { burgers, compartibles, combos } from "@/data/products";
+import Ticker from "@/components/Ticker.astro";
+---
+
+<Layout title="Two Guys Burger - Menú">
+    <Ticker />
+    <main class="bg-brand-cream min-h-screen pt-20">
+        <section id="menu" class="px-[5vw] py-12">
+            <div class="mx-auto max-w-7xl">
+                <p
+                    class="font-marker text-brand-teal mb-2 tracking-[6px] uppercase"
+                    style="text-shadow: 2px 2px 0 #0A0A0A"
+                >
+                    ★ Lo que hacemos mejor
+                </p>
+                <h2
+                    class="font-bebas text-brand-black mb-10 leading-none"
+                    style="font-size: clamp(3rem,7vw,5.5rem); text-shadow: 4px 4px 0 #E8192C"
+                >
+                    Las Hamburguesas
+                </h2>
+                <div class="grid gap-7" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))">
+                    {burgers.map((burger) => <ProductCard {...burger} />)}
+                </div>
+
+                <div class="mt-20">
+                    <p
+                        class="font-marker text-brand-teal mb-2 tracking-[6px] uppercase"
+                        style="text-shadow: 2px 2px 0 #0A0A0A"
+                    >
+                        ★ Para acompañar
+                    </p>
+                    <h2
+                        class="font-bebas text-brand-black mb-10 leading-none"
+                        style="font-size: clamp(3rem,7vw,4.5rem); text-shadow: 4px 4px 0 #E8192C"
+                    >
+                        Compartibles
+                    </h2>
+                    <div class="grid gap-7" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))">
+                        {compartibles.map((item) => <ProductCard {...item} />)}
+                    </div>
+                </div>
+
+                <div class="mt-20">
+                    <p
+                        class="font-marker text-brand-teal mb-2 tracking-[6px] uppercase"
+                        style="text-shadow: 2px 2px 0 #0A0A0A"
+                    >
+                        ★ La experiencia completa
+                    </p>
+                    <h2
+                        class="font-bebas text-brand-black mb-10 leading-none"
+                        style="font-size: clamp(3rem,7vw,4.5rem); text-shadow: 4px 4px 0 #E8192C"
+                    >
+                        Paquetes & Combos
+                    </h2>
+                    <div class="grid gap-7" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))">
+                        {combos.map((combo) => <ProductCard {...combo} />)}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</Layout>

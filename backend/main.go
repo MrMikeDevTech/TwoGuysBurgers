@@ -41,6 +41,11 @@ func main() {
 	mux.HandleFunc("/auth/is-admin", handlers.AuthHandler)
 	mux.Handle("/auth/admins/{email}", protected(handlers.AdminHandler))
 
-	log.Println("servidor corriendo en :8080")
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	port := os.Getenv("BACK_PORT")
+	if port == "" {
+		port = "19000"
+	}
+
+	log.Printf("Servidor corriendo en el puerto %s\n", port)
+	log.Fatal(http.ListenAndServe(":"+port, mux))
 }

@@ -1,0 +1,38 @@
+name: Backend CI/CD (Self-Hosted)
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'backend/**'
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Build Backend
+        run: |
+          cd backend
+          go mod download
+          go build -o main .
+
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.BACKEND_ENV }}" > backend/.env
+
+      - name: Restart Docker Compose
+        run: |
+          cd backend
+          docker compose up -d --build
+
+      - name: Reload Systemd Service
+        run: |
+          sudo systemctl restart twoguysburgers.backend.service

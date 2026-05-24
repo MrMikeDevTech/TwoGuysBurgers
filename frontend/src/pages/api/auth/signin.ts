@@ -4,10 +4,14 @@ import { createSupabaseClient } from "@/lib/supabase";
 export const GET: APIRoute = async (context) => {
     const supabase = createSupabaseClient(context);
 
+    const host = context.request.headers.get("host") || context.url.host;
+    const protocol = host.includes("localhost") ? "http" : "https";
+    const origin = `${protocol}://${host}`;
+
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-            redirectTo: `${context.url.origin}/api/auth/callback`
+            redirectTo: `${origin}/api/auth/callback`
         }
     });
 

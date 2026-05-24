@@ -1,7 +1,7 @@
 {
     "dependencies": {
-        "@astrojs/node": "10.1.0",
         "@astrojs/react": "5.0.5",
+        "@astrojs/vercel": "^10.0.7",
         "@nanostores/react": "1.1.0",
         "@supabase/ssr": "0.10.3",
         "@supabase/supabase-js": "2.105.4",

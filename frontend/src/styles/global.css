@@ -1,82 +1,88 @@
 @import "tailwindcss";
+@import "tailwind-animations";
+
+html {
+    scroll-behavior: smooth;
+}
 
 @theme {
-  --color-brand-red: #e8192c;
-  --color-brand-yellow: #ffd600;
-  --color-brand-teal: #00b4b4;
-  --color-brand-orange: #ff6b00;
-  --color-brand-cream: #fff5dc;
-  --color-brand-black: #0a0a0a;
+    --color-brand-red: #e8192c;
+    --color-brand-yellow: #ffd600;
+    --color-brand-teal: #00b4b4;
+    --color-brand-orange: #ff6b00;
+    --color-brand-cream: #fff5dc;
+    --color-brand-black: #0a0a0a;
 
-  --font-bebas: "Bebas Neue", sans-serif;
-  --font-marker: "Permanent Marker", cursive;
-  --font-vt: "VT323", monospace;
+    --font-bebas: "Bebas Neue", sans-serif;
+    --font-marker: "Permanent Marker", cursive;
+    --font-vt: "VT323", monospace;
 
-  --animate-ticker: ticker 22s linear infinite;
-  --animate-splat: splat 3s ease-in-out infinite;
-  --animate-wobble: wobble 2.5s ease-in-out infinite;
+    --animate-ticker: ticker 22s linear infinite;
+    --animate-splat: splat 3s ease-in-out infinite;
+    --animate-wobble: wobble 2.5s ease-in-out infinite;
+    --animate-bg-infinite: bgmove 4s linear infinite;
 }
 
 @keyframes ticker {
-  from {
-    transform: translateX(100vw);
-  }
-  to {
-    transform: translateX(-100%);
-  }
+    from {
+        transform: translateX(100vw);
+    }
+    to {
+        transform: translateX(-100%);
+    }
 }
 @keyframes splat {
-  0%,
-  100% {
-    border-radius: 42% 58% 55% 45%/48% 52% 48% 52%;
-  }
-  50% {
-    border-radius: 58% 42% 45% 55%/52% 48% 52% 48%;
-  }
+    0%,
+    100% {
+        border-radius: 42% 58% 55% 45%/48% 52% 48% 52%;
+    }
+    50% {
+        border-radius: 58% 42% 45% 55%/52% 48% 52% 48%;
+    }
 }
 @keyframes wobble {
-  0%,
-  100% {
-    transform: rotate(-5deg);
-  }
-  50% {
-    transform: rotate(5deg);
-  }
+    0%,
+    100% {
+        transform: rotate(-5deg);
+    }
+    50% {
+        transform: rotate(5deg);
+    }
 }
 @keyframes bounce {
-  0%,
-  100% {
-    transform: translateX(-50%) translateY(0);
-  }
-  50% {
-    transform: translateX(-50%) translateY(12px);
-  }
+    0%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(12px);
+    }
 }
 @keyframes slideup {
-  from {
-    opacity: 0;
-    transform: translateY(60px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+    from {
+        opacity: 0;
+        transform: translateY(60px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
 }
 @keyframes fadedown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
 }
 @keyframes bgmove {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 60px 60px;
-  }
+    0% {
+        transform: translate(0, 0);
+    }
+    100% {
+        transform: translate(60px, 60px);
+    }
 }

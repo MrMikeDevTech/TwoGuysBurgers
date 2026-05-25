@@ -407,42 +407,42 @@ export const IngredientManager = ({ token }: IngredientManagerProps) => {
                     </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                     {ingredients.map((item) => (
                         <div
                             key={item.id}
-                            className="bg-brand-black group border-brand-cream hover:border-brand-yellow relative flex flex-col border-4 transition-all hover:-translate-y-1"
+                            className="bg-brand-black group border-brand-cream hover:border-brand-yellow relative flex flex-col border-[3px] transition-all hover:-translate-y-1"
                         >
-                            <div className="bg-brand-cream/10 border-brand-cream group-hover:border-brand-yellow relative aspect-square overflow-hidden border-b-4">
+                            <div className="bg-brand-cream/10 border-brand-cream group-hover:border-brand-yellow relative aspect-square overflow-hidden border-b-[3px]">
                                 <img
                                     src={item.image_url}
                                     alt={item.name}
-                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    className="h-full w-full bg-white object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
-                                <div className="bg-brand-yellow text-brand-black font-bebas absolute top-4 left-4 px-3 py-1 text-xl shadow-[4px_4px_0_#000]">
+                                <div className="bg-brand-yellow text-brand-black font-bebas absolute top-2 left-2 px-2 py-0.5 text-lg shadow-[2px_2px_0_#000]">
                                     {item.stock} {item.unit}
                                 </div>
                             </div>
-                            <div className="flex flex-1 flex-col p-4">
-                                <h3 className="font-bebas text-brand-yellow line-clamp-1 text-2xl">{item.name}</h3>
-                                <div className="mt-2 flex items-center justify-between">
-                                    <p className="font-vt text-brand-cream text-xl">
+                            <div className="flex flex-1 flex-col p-3">
+                                <h3 className="font-bebas text-brand-yellow line-clamp-1 text-xl">{item.name}</h3>
+                                <div className="mt-1 flex flex-col justify-between gap-1 2xl:flex-row 2xl:items-center">
+                                    <p className="font-vt text-brand-cream text-lg">
                                         PRECIO: <span className="text-brand-yellow">${item.unit_price}</span>
                                     </p>
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1 self-start 2xl:self-auto">
                                         <button
                                             onClick={() => handleOpenEdit(item)}
-                                            className="text-brand-cream hover:text-brand-yellow cursor-pointer p-2 transition-colors"
+                                            className="text-brand-cream hover:text-brand-yellow cursor-pointer p-1.5 transition-colors"
                                             title="Editar ingrediente"
                                         >
-                                            <Pencil className="h-5 w-5" />
+                                            <Pencil className="h-4 w-4" />
                                         </button>
                                         <button
                                             onClick={() => handleDelete(item.id)}
-                                            className="text-brand-cream hover:text-brand-red cursor-pointer p-2 transition-colors"
+                                            className="text-brand-cream hover:text-brand-red cursor-pointer p-1.5 transition-colors"
                                             title="Eliminar ingrediente"
                                         >
-                                            <Trash2 className="h-6 w-6" />
+                                            <Trash2 className="h-5 w-5" />
                                         </button>
                                     </div>
                                 </div>

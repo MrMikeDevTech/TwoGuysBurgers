@@ -14,7 +14,8 @@ export const getIngredients = async (token: string): Promise<Ingredient[]> => {
 
         if (!response.ok) return [];
 
-        return await response.json();
+        const data = await response.json();
+        return data || [];
     } catch (error) {
         console.error("Error fetching ingredients:", error);
         return [];

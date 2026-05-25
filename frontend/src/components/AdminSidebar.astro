@@ -1,0 +1,124 @@
+---
+import { LayoutDashboard, ShoppingCart, UtensilsCrossed, ChefHat, Users, LogOut, X, Menu } from "lucide-react";
+
+const { user } = Astro.locals;
+const currentPath = Astro.url.pathname.replace(/\/$/, ""); // Normalize path
+
+const sidebarItems = [
+    { name: "Dashboard", icon: LayoutDashboard, href: "/admin", category: "General" },
+    { name: "Ordenes", icon: ShoppingCart, href: "/admin/orders", category: "Ventas" },
+    { name: "Ingredientes", icon: UtensilsCrossed, href: "/admin/ingredients", category: "Inventario" },
+    { name: "Recetas", icon: ChefHat, href: "/admin/recipes", category: "Inventario" },
+    { name: "Usuarios Autorizados", icon: Users, href: "/admin/authorized-users", category: "Sistema" }
+];
+
+const categories = [...new Set(sidebarItems.map((item) => item.category))];
+
+const fullName = user?.user_metadata?.full_name || "Admin";
+const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+---
+
+<button
+    id="admin-sidebar-toggle"
+    class="bg-brand-yellow border-brand-black text-brand-black fixed top-24 right-4 z-30 flex h-12 w-12 items-center justify-center rounded border-4 shadow-[4px_4px_0_#e8192c] transition-transform hover:scale-110 lg:hidden"
+    aria-label="Toggle Sidebar"
+>
+    <Menu className="h-8 w-8" id="admin-menu-icon" />
+    <X className="hidden h-8 w-8" id="admin-close-icon" />
+</button>
+
+<div
+    id="admin-sidebar-overlay"
+    class="fixed inset-0 z-40 hidden bg-black/60 backdrop-blur-sm transition-opacity lg:hidden"
+>
+</div>
+
+<aside
+    id="admin-sidebar"
+    class="bg-brand-black border-brand-yellow fixed top-20 bottom-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r-4 transition-transform duration-300 lg:translate-x-0"
+>
+    <div class="border-brand-yellow/30 bg-brand-red/5 border-b-2 p-6">
+        <div class="font-marker text-brand-yellow -rotate-2 text-3xl tracking-tighter">
+            TGB <span class="text-brand-red font-bebas -mt-2 block text-sm tracking-widest">ADMIN PANEL</span>
+        </div>
+    </div>
+
+    <nav class="custom-scrollbar flex-1 overflow-y-auto p-4">
+        {
+            categories.map((category) => (
+                <div class="mb-6">
+                    <p class="font-vt text-brand-red mb-3 px-2 text-sm tracking-[4px] uppercase">► {category}</p>
+                    <ul class="space-y-1">
+                        {sidebarItems
+                            .filter((item) => item.category === category)
+                            .map((item) => {
+                                const isActive =
+                                    currentPath === item.href ||
+                                    (item.href !== "/admin" && currentPath.startsWith(item.href));
+                                return (
+                                    <li>
+                                        <a
+                                            href={item.href}
+                                            class={`font-bebas group flex items-center gap-3 rounded-lg px-3 py-2 text-xl transition-all ${isActive ? "bg-brand-yellow text-brand-black" : "text-brand-cream hover:bg-brand-yellow hover:text-brand-black"}`}
+                                        >
+                                            <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                            <span>{item.name}</span>
+                                        </a>
+                                    </li>
+                                );
+                            })}
+                    </ul>
+                </div>
+            ))
+        }
+    </nav>
+
+    <div class="border-brand-yellow bg-brand-yellow/5 border-t-4 p-4">
+        <div class="bg-brand-black border-brand-yellow flex items-center gap-3 border-2 p-2 shadow-[4px_4px_0_#e8192c]">
+            <img src={avatarUrl} alt={fullName} class="border-brand-yellow h-10 w-10 rounded-full border-2" />
+            <div class="min-w-0">
+                <p class="font-bebas text-brand-yellow truncate text-lg leading-none">{fullName}</p>
+                <p class="font-vt text-brand-cream/60 text-xs tracking-wider uppercase">Admin</p>
+            </div>
+        </div>
+        <form action="/api/auth/signout" method="POST" class="mt-4">
+            <button
+                class="font-bebas bg-brand-red text-brand-cream flex w-full items-center justify-center gap-2 py-2 shadow-[4px_4px_0_#000] transition-all hover:brightness-110"
+            >
+                <LogOut className="h-4 w-4" />
+                <span>Cerrar Sesión</span>
+            </button>
+        </form>
+    </div>
+</aside>
+
+<script>
+    document.addEventListener("astro:page-load", () => {
+        const toggleBtn = document.getElementById("admin-sidebar-toggle");
+        const sidebar = document.getElementById("admin-sidebar");
+        const overlay = document.getElementById("admin-sidebar-overlay");
+        const menuIcon = document.getElementById("admin-menu-icon");
+        const closeIcon = document.getElementById("admin-close-icon");
+
+        if (!toggleBtn || !sidebar || !overlay) return;
+
+        const toggleSidebar = () => {
+            const isClosed = sidebar.classList.contains("-translate-x-full");
+
+            if (isClosed) {
+                sidebar.classList.remove("-translate-x-full");
+                overlay.classList.remove("hidden");
+                menuIcon?.classList.add("hidden");
+                closeIcon?.classList.remove("hidden");
+            } else {
+                sidebar.classList.add("-translate-x-full");
+                overlay.classList.add("hidden");
+                menuIcon?.classList.remove("hidden");
+                closeIcon?.classList.add("hidden");
+            }
+        };
+
+        toggleBtn.addEventListener("click", toggleSidebar);
+        overlay.addEventListener("click", toggleSidebar);
+    });
+</script>

@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { uploadIngredient, uploadRecipe, uploadCombo } from "@/services/Cloudinary";
 
+// eslint-disable-next-line no-unused-vars
 const uploaders: Record<string, (args: { id: string; file: File }) => Promise<{ url: string }>> = {
     ingredients: uploadIngredient,
     recipes: uploadRecipe,
@@ -29,7 +30,6 @@ export const POST: APIRoute = async ({ request }) => {
             });
         }
 
-        // Use the name as public_id (sanitize it)
         const publicId = name
             .toLowerCase()
             .replace(/[^a-z0-9_-]/g, "_")

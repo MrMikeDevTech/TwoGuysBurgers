@@ -1,87 +1,21 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
-import { LayoutDashboard, ShoppingCart, UtensilsCrossed, ChefHat, Users, LogOut, ShieldCheck } from "lucide-react";
+import AdminSidebar from "@/components/AdminSidebar.astro";
+import { ShieldCheck } from "lucide-react";
 import { AdminActions } from "@/components/AdminActions";
 
-const { user } = Astro.locals;
 const {
     data: { session }
 } = await Astro.locals.supabase.auth.getSession();
 const token = session?.access_token || "";
-
-const sidebarItems = [
-    { name: "Dashboard", icon: LayoutDashboard, href: "/admin", category: "General" },
-    { name: "Ordenes", icon: ShoppingCart, href: "/admin/orders", category: "Ventas" },
-    { name: "Ingredientes", icon: UtensilsCrossed, href: "/admin/ingredients", category: "Inventario" },
-    { name: "Recetas", icon: ChefHat, href: "/admin/recipes", category: "Inventario" },
-    { name: "Usuarios Autorizados", icon: Users, href: "/admin/authorized-users", category: "Sistema" }
-];
-
-const categories = [...new Set(sidebarItems.map((item) => item.category))];
-
-const fullName = user?.user_metadata?.full_name || "Admin";
-const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
 ---
 
 <AdminLayout title="Two Guys Burger - Usuarios Autorizados">
     <div class="bg-brand-black flex min-h-screen pt-20">
-        <aside class="bg-brand-black border-brand-yellow fixed z-40 flex h-[calc(100vh-80px)] w-72 flex-col border-r-4">
-            <div class="border-brand-yellow/30 bg-brand-red/5 border-b-2 p-6">
-                <div class="font-marker text-brand-yellow -rotate-2 text-3xl tracking-tighter">
-                    TGB <span class="text-brand-red font-bebas -mt-2 block text-sm tracking-widest">ADMIN PANEL</span>
-                </div>
-            </div>
+        <AdminSidebar />
 
-            <nav class="custom-scrollbar flex-1 overflow-y-auto p-4">
-                {
-                    categories.map((category) => (
-                        <div class="mb-6">
-                            <p class="font-vt text-brand-red mb-3 px-2 text-sm tracking-[4px] uppercase">
-                                ► {category}
-                            </p>
-                            <ul class="space-y-1">
-                                {sidebarItems
-                                    .filter((item) => item.category === category)
-                                    .map((item) => (
-                                        <li>
-                                            <a
-                                                href={item.href}
-                                                class={`font-bebas group flex items-center gap-3 rounded-lg px-3 py-2 text-xl transition-all ${item.href === "/admin/authorized-users" ? "bg-brand-yellow text-brand-black" : "text-brand-cream hover:bg-brand-yellow hover:text-brand-black"}`}
-                                            >
-                                                <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                                <span>{item.name}</span>
-                                            </a>
-                                        </li>
-                                    ))}
-                            </ul>
-                        </div>
-                    ))
-                }
-            </nav>
-
-            <div class="border-brand-yellow bg-brand-yellow/5 border-t-4 p-4">
-                <div
-                    class="bg-brand-black border-brand-yellow flex items-center gap-3 border-2 p-2 shadow-[4px_4px_0_#e8192c]"
-                >
-                    <img src={avatarUrl} alt={fullName} class="border-brand-yellow h-10 w-10 rounded-full border-2" />
-                    <div class="min-w-0">
-                        <p class="font-bebas text-brand-yellow truncate text-lg leading-none">{fullName}</p>
-                        <p class="font-vt text-brand-cream/60 text-xs tracking-wider uppercase">Admin</p>
-                    </div>
-                </div>
-                <form action="/api/auth/signout" method="POST" class="mt-4">
-                    <button
-                        class="font-bebas bg-brand-red text-brand-cream flex w-full items-center justify-center gap-2 py-2 shadow-[4px_4px_0_#000] transition-all hover:brightness-110"
-                    >
-                        <LogOut className="h-4 w-4" />
-                        <span>Cerrar Sesión</span>
-                    </button>
-                </form>
-            </div>
-        </aside>
-
-        <main class="ml-72 flex-1 p-8">
-            <header class="mb-10 flex items-end justify-between">
+        <main class="flex-1 p-4 lg:ml-72 lg:p-8">
+            <header class="mb-10 flex flex-col items-start gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                     <p class="font-marker text-brand-red mb-2 text-xl tracking-widest uppercase">★ Sistema</p>
                     <h1

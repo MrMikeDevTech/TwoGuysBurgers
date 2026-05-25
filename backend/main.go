@@ -61,6 +61,7 @@ func main() {
 	mux.Handle("/orders", publicOrder(handlers.OrdersHandler))
 	mux.Handle("/orders/{id}", protected(handlers.OrderHandler))
 	mux.HandleFunc("/auth/is-admin", handlers.AuthHandler)
+	mux.Handle("/auth/admins", protected(handlers.AdminHandler))
 	mux.Handle("/auth/admins/{email}", protected(handlers.AdminHandler))
 
 	port := os.Getenv("BACK_PORT")

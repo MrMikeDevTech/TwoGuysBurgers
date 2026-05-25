@@ -50,6 +50,23 @@ export const createOrder = async (order: CreateOrderDTO, token?: string): Promis
     }
 };
 
+export const deleteOrder = async (id: string, token: string): Promise<boolean> => {
+    try {
+        const response = await fetch(`${API_URL}/orders/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        return response.ok;
+    } catch (error) {
+        console.error("Error deleting order:", error);
+        return false;
+    }
+};
+
 export const updateOrderStatus = async (id: string, status: string, token: string): Promise<boolean> => {
     try {
         const response = await fetch(`${API_URL}/orders/${id}`, {

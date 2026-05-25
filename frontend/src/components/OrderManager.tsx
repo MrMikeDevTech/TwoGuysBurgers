@@ -1,11 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
-import { getOrders, updateOrderStatus } from "@/services/Orders";
+import { getOrders, updateOrderStatus, deleteOrder } from "@/services/Orders";
 import { getRecipes } from "@/services/Recipes";
 import type { Order, OrderStatus } from "@/models/order";
 import type { Recipe } from "@/models/recipe";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Calendar, User, Package, Loader2, RefreshCw, Search, Filter } from "lucide-react";
+import { Calendar, User, Package, Loader2, RefreshCw, Search, Filter, Trash2 } from "lucide-react";
 
 interface OrderManagerProps {
     token: string;
@@ -45,6 +45,22 @@ export const OrderManager = ({ token }: OrderManagerProps) => {
                 fetchData();
             } else {
                 toast.error("Error al actualizar el estado");
+            }
+        } catch {
+            toast.error("Error en el servidor");
+        }
+    };
+
+    const handleDeleteOrder = async (orderId: string) => {
+        if (!confirm("¿Estás seguro de que deseas eliminar esta orden?")) return;
+
+        try {
+            const success = await deleteOrder(orderId, token);
+            if (success) {
+                toast.success("Orden eliminada correctamente");
+                fetchData();
+            } else {
+                toast.error("Error al eliminar la orden");
             }
         } catch {
             toast.error("Error en el servidor");
@@ -203,6 +219,12 @@ export const OrderManager = ({ token }: OrderManagerProps) => {
                                         className={`font-bebas border-2 px-4 py-2 text-xl transition-all ${order.status === "done" ? "border-green-500 bg-green-500 text-white" : "text-brand-cream border-brand-cream hover:border-green-500"}`}
                                     >
                                         COMPLETAR
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteOrder(order.id)}
+                                        className="font-bebas border-brand-red text-brand-red hover:bg-brand-red ml-4 border-2 px-4 py-2 text-xl transition-all hover:text-white"
+                                    >
+                                        <Trash2 className="h-5 w-5" />
                                     </button>
                                 </div>
                             </div>

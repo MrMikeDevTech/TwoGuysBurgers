@@ -26,6 +26,8 @@ func AuthHandler(w http.ResponseWriter, r *http.Request) {
 
 func AdminHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
+	case http.MethodGet:
+		getAdmins(w, r)
 	case http.MethodPost:
 		addAdmin(w, r)
 	case http.MethodDelete:
@@ -33,6 +35,32 @@ func AdminHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "método no permitido", http.StatusMethodNotAllowed)
 	}
+}
+
+func getAdmins(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := db.GetCollection("admins")
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		http.Error(w, "error al obtener admins", http.StatusInternalServerError)
+		return
+	}
+	defer cursor.Close(ctx)
+
+	var admins []models.Admin
+	if err := cursor.All(ctx, &admins); err != nil {
+		http.Error(w, "error al leer admins", http.StatusInternalServerError)
+		return
+	}
+
+	if admins == nil {
+		admins = []models.Admin{}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(admins)
 }
 
 func addAdmin(w http.ResponseWriter, r *http.Request) {

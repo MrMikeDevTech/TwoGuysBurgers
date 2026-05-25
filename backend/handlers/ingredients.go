@@ -129,6 +129,11 @@ func createIngredient(w http.ResponseWriter, r *http.Request) {
 		log.Println("el stock no puede ser negativo")
 		return
 	}
+	if newIngredient.ImageUrl == "" {
+		http.Error(w, "la imagen del ingrediente no puede estar vacía", http.StatusBadRequest)
+		log.Println("la imagen del ingrediente no puede estar vacía")
+		return
+	}
 
 	newIngredient.ID = primitive.NewObjectID()
 

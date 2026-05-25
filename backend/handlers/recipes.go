@@ -133,6 +133,11 @@ func createRecipe(w http.ResponseWriter, r *http.Request) {
 		log.Println("tipo de receta inválido:", newRecipe.RecipeKind)
 		return
 	}
+	if newRecipe.ImageUrl == "" {
+		http.Error(w, "la imagen de la receta no puede estar vacía", http.StatusBadRequest)
+		log.Println("la imagen de la receta no puede estar vacía")
+		return
+	}
 
 	newRecipe.ID = primitive.NewObjectID()
 

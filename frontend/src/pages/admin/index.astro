@@ -6,10 +6,10 @@ const { user } = Astro.locals;
 
 const sidebarItems = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/admin", category: "General" },
-    { name: "Pedidos", icon: ShoppingCart, href: "/admin/pedidos", category: "Ventas" },
-    { name: "Ingredientes", icon: UtensilsCrossed, href: "/admin/ingredientes", category: "Inventario" },
-    { name: "Recetas", icon: ChefHat, href: "/admin/recetas", category: "Inventario" },
-    { name: "Admins", icon: Users, href: "/admin/authorized-users", category: "Sistema" }
+    { name: "Ordenes", icon: ShoppingCart, href: "/admin/orders", category: "Ventas" },
+    { name: "Ingredientes", icon: UtensilsCrossed, href: "/admin/ingredients", category: "Inventario" },
+    { name: "Recetas", icon: ChefHat, href: "/admin/recipes", category: "Inventario" },
+    { name: "Usuarios Autorizados", icon: Users, href: "/admin/authorized-users", category: "Sistema" }
 ];
 
 const categories = [...new Set(sidebarItems.map((item) => item.category))];
@@ -19,7 +19,7 @@ const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.pictur
 const role = "Super Admin";
 ---
 
-<AdminLayout title="TGB - Panel de Control">
+<AdminLayout title="Two Guys Burger - Panel de Control">
     <div class="bg-brand-black flex min-h-screen pt-20">
         <aside class="bg-brand-black border-brand-yellow fixed z-40 flex h-[calc(100vh-80px)] w-72 flex-col border-r-4">
             <div class="border-brand-yellow/30 bg-brand-red/5 border-b-2 p-6">

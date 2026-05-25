@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.PUBLIC_API_URL || "http://192.168.1.66:18000";
+const API_URL = import.meta.env.PUBLIC_API_URL || "https://api.guysburger.shop/";
 
 export const isAdmin = async (token: string): Promise<boolean> => {
     try {
@@ -13,7 +13,8 @@ export const isAdmin = async (token: string): Promise<boolean> => {
         if (!response.ok) return false;
 
         const data = await response.json();
-        return data.is_admin === true;
+
+        return typeof data.is_admin === "boolean" ? data.is_admin : false;
     } catch (error) {
         console.error("Error checking admin status:", error);
         return false;

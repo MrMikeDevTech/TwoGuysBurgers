@@ -11,10 +11,10 @@ const token = session?.access_token || "";
 
 const sidebarItems = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/admin", category: "General" },
-    { name: "Pedidos", icon: ShoppingCart, href: "/admin/pedidos", category: "Ventas" },
-    { name: "Ingredientes", icon: UtensilsCrossed, href: "/admin/ingredientes", category: "Inventario" },
-    { name: "Recetas", icon: ChefHat, href: "/admin/recetas", category: "Inventario" },
-    { name: "Admins", icon: Users, href: "/admin/authorized-users", category: "Sistema" }
+    { name: "Ordenes", icon: ShoppingCart, href: "/admin/orders", category: "Ventas" },
+    { name: "Ingredientes", icon: UtensilsCrossed, href: "/admin/ingredients", category: "Inventario" },
+    { name: "Recetas", icon: ChefHat, href: "/admin/recipes", category: "Inventario" },
+    { name: "Usuarios Autorizados", icon: Users, href: "/admin/authorized-users", category: "Sistema" }
 ];
 
 const categories = [...new Set(sidebarItems.map((item) => item.category))];
@@ -23,7 +23,7 @@ const fullName = user?.user_metadata?.full_name || "Admin";
 const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
 ---
 
-<Layout title="TGB - Usuarios Autorizados">
+<Layout title="Two Guys Burger - Usuarios Autorizados">
     <div class="bg-brand-black flex min-h-screen pt-20">
         <aside class="bg-brand-black border-brand-yellow fixed z-40 flex h-[calc(100vh-80px)] w-72 flex-col border-r-4">
             <div class="border-brand-yellow/30 bg-brand-red/5 border-b-2 p-6">
@@ -115,10 +115,7 @@ const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.pictur
                             Añadir un usuario le otorga acceso total al Panel de Control (Inventario, Pedidos y
                             Sistema).
                         </li>
-                        <li>
-                            Al remover un usuario, su sesión activa será invalidada por el middleware en su siguiente
-                            interacción.
-                        </li>
+                        <li>Al remover un usuario, sus permisos se revocan inmediatamente.</li>
                     </ul>
                 </div>
             </div>

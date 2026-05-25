@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useStore } from "@nanostores/react";
 import { cartItems, removeCartItem, updateQuantity, clearCart } from "@/store/cart";
 import { ShoppingCart, X, Plus, Minus, Trash2, Check } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export const Cart = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +20,7 @@ export const Cart = () => {
         setIsCheckingOut(true);
         setCheckoutProgress(0);
 
-        toast.success("¡Procesando pedido!", { duration: 2000 });
+        toast.success("¡Procesando pedido!", { autoClose: 2000 });
 
         const interval = setInterval(() => {
             setCheckoutProgress((prev) => {

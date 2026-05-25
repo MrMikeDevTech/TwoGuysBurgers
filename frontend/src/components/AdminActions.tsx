@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { addAdmin, removeAdmin } from "@/services/Auth";
-import { toast } from "sonner";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { UserPlus, UserMinus, Mail } from "lucide-react";
 
 interface AdminActionsProps {
@@ -49,6 +50,29 @@ export const AdminActions = ({ token }: AdminActionsProps) => {
 
     return (
         <div className="bg-brand-black border-brand-yellow max-w-3xl border-4 p-8 shadow-[12px_12px_0_#e8192c]">
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={true}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+                toastStyle={{
+                    backgroundColor: "#0a0a0a",
+                    border: "4px solid #ffd600",
+                    borderRadius: "0px",
+                    fontFamily: "'VT323', monospace",
+                    fontSize: "1.25rem",
+                    color: "#fff5dc",
+                    boxShadow: "6px 6px 0 #e8192c",
+                    textTransform: "uppercase",
+                    letterSpacing: "1px"
+                }}
+            />
             <h2 className="font-bebas text-brand-yellow mb-6 flex items-center gap-3 text-4xl">
                 <Mail className="text-brand-red h-8 w-8" />
                 GESTIÓN DE ACCESOS
@@ -99,3 +123,4 @@ export const AdminActions = ({ token }: AdminActionsProps) => {
         </div>
     );
 };
+

@@ -28,8 +28,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     const token = session?.access_token;
 
-    // console.log(token);
-
     locals.user = user;
     locals.supabase = supabase;
     locals.isAdmin = false;

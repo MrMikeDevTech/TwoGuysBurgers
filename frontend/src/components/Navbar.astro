@@ -1,7 +1,9 @@
 ---
 import UserDropdown from "./UserDropdown.astro";
 import { Cart } from "./Cart";
-const { user, isAdmin } = Astro.locals;
+
+const { user, isAdmin, token } = Astro.locals;
+const customerName = user?.user_metadata?.full_name || user?.email || "Cliente Web";
 
 const links = [
     { label: "Menú", href: "/menu" },
@@ -28,7 +30,7 @@ const links = [
             ))
         }
         <li>
-            <Cart client:load />
+            <Cart client:load token={token} customerName={customerName} />
         </li>
         {
             user ? (

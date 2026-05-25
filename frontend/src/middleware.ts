@@ -24,6 +24,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     locals.user = user;
     locals.supabase = supabase;
     locals.isAdmin = false;
+    locals.token = token;
 
     if (token) {
         locals.isAdmin = await isAdmin(token);

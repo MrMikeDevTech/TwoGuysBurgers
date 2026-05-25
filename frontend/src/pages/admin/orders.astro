@@ -1,0 +1,41 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import AdminSidebar from "@/components/AdminSidebar.astro";
+import { ShoppingBag } from "lucide-react";
+import { OrderManager } from "@/components/OrderManager";
+
+const { token } = Astro.locals;
+---
+
+<AdminLayout title="Admin - Órdenes">
+    <div class="flex h-screen bg-[#0a0a0a]">
+        <AdminSidebar active="orders" />
+
+        <main class="flex-1 overflow-y-auto p-8 lg:pl-[20rem] pt-32 custom-scrollbar">
+            <div class="mb-10 flex items-center gap-4">
+                <div class="bg-brand-yellow rounded-full p-3 shadow-[4px_4px_0_#e8192c]">
+                    <ShoppingBag className="text-brand-black h-8 w-8" />
+                </div>
+                <div>
+                    <h1 class="font-bebas text-brand-cream text-6xl tracking-tight">PEDIDOS</h1>
+                    <p class="font-vt text-brand-teal text-2xl">Gestiona las órdenes de tus clientes en tiempo real</p>
+                </div>
+            </div>
+
+            <OrderManager client:load token={token!} />
+        </main>
+    </div>
+</AdminLayout>
+
+<style is:global>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #ffd600;
+        border-radius: 10px;
+    }
+</style>

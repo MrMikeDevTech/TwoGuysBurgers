@@ -14,4 +14,4 @@ export interface Order {
     date: string;
 }
 
-export type CreateOrderDTO = Omit<Order, "id" | "date" | "status">;
+export type CreateOrderDTO = Omit<Order, "id" | "date" | "status" | "total_price">;

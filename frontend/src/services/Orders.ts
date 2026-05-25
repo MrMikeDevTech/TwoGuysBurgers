@@ -37,9 +37,7 @@ export const createOrder = async (order: CreateOrderDTO, token?: string): Promis
             headers,
             body: JSON.stringify({
                 customer_name: order.customer_name,
-                total_price: order.total_price,
-                recipe_orders: order.recipe_orders,
-                status: "pending"
+                recipes: order.recipe_orders
             })
         });
 

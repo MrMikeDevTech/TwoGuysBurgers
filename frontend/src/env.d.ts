@@ -16,5 +16,6 @@ declare namespace App {
         user: import("@supabase/supabase-js").User | null;
         supabase: import("@supabase/supabase-js").SupabaseClient;
         isAdmin: boolean;
+        token?: string;
     }
 }

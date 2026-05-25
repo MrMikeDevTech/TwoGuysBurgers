@@ -1,18 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "@nanostores/react";
 import { cartItems, removeCartItem, updateQuantity, clearCart } from "@/store/cart";
 import { ShoppingCart, X, Plus, Minus, Trash2, Check } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { createOrder } from "@/services/Orders";
-import type { RecipeOrder } from "@/models/order";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
 
-export const Cart = () => {
+interface Props {
+    token?: string;
+    customerName?: string;
+}
+
+export const Cart = ({ token, customerName = "Cliente Web" }: Props) => {
+    const [mounted, setMounted] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
     const [checkoutProgress, setCheckoutProgress] = useState(0);
     const [isCheckoutDone, setIsCheckoutDone] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const $cartItems = useStore(cartItems);
     const items = Object.values($cartItems);
@@ -26,39 +34,13 @@ export const Cart = () => {
         setIsCheckingOut(true);
         setCheckoutProgress(0);
 
-        const supabase = createBrowserSupabaseClient();
-        const {
-            data: { session }
-        } = await supabase.auth.getSession();
-        const token = session?.access_token;
-        const customerName = session?.user?.user_metadata?.full_name || session?.user?.email || "Cliente Web";
-
-        const recipeOrders: RecipeOrder[] = [];
-
-        items.forEach((item) => {
-            if (item.type === "recipe") {
-                recipeOrders.push({
-                    recipe_id: item.id,
-                    amount: item.quantity
-                });
-            } else if (item.type === "combo" && item.recipes) {
-                item.recipes.forEach((r) => {
-                    const existing = recipeOrders.find((ro) => ro.recipe_id === r.recipe_id);
-                    if (existing) {
-                        existing.amount += r.amount * item.quantity;
-                    } else {
-                        recipeOrders.push({
-                            recipe_id: r.recipe_id,
-                            amount: r.amount * item.quantity
-                        });
-                    }
-                });
-            }
-        });
+        const recipeOrders = items.map((item) => ({
+            recipe_id: item.id,
+            amount: item.quantity
+        }));
 
         const orderData = {
-            customer_name: customerName,
-            total_price: totalPrice,
+            customer_name: customerName || "Cliente Web",
             recipe_orders: recipeOrders
         };
 
@@ -106,8 +88,11 @@ export const Cart = () => {
                 className="text-brand-yellow relative p-2 transition-colors hover:text-white"
             >
                 <ShoppingCart size={28} />
-                {totalItems > 0 && (
-                    <span className="bg-brand-red border-brand-black absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 text-[10px] font-bold text-white">
+                {mounted && totalItems > 0 && (
+                    <span
+                        suppressHydrationWarning={true}
+                        className="bg-brand-red border-brand-black absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 text-[10px] font-bold text-white"
+                    >
                         {totalItems}
                     </span>
                 )}

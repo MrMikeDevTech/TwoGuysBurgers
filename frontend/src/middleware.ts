@@ -3,11 +3,6 @@ import { createSupabaseClient } from "@/lib/supabase";
 import { burgers, compartibles, combos } from "@/data/products";
 import { isAdmin } from "@/services/Auth";
 
-async function IsAdminUser() {
-    const { isAdmin: isAdminResponse } = await isAdmin();
-    return isAdminResponse;
-}
-
 const protectedRoutes = ["/admin"];
 const authRoutes = ["/login"];
 
@@ -27,8 +22,21 @@ export const onRequest = defineMiddleware(async (context, next) => {
         data: { user }
     } = await supabase.auth.getUser();
 
+    const {
+        data: { session }
+    } = await supabase.auth.getSession();
+
+    const token = session?.access_token;
+
+    // console.log(token);
+
     locals.user = user;
     locals.supabase = supabase;
+    locals.isAdmin = false;
+
+    if (token) {
+        locals.isAdmin = await isAdmin(token);
+    }
 
     if (pathname.startsWith("/menu/")) {
         const productId = pathname.split("/").pop();
@@ -39,7 +47,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
 
     if (protectedRoutes.some((route) => pathname.startsWith(route))) {
-        if (!user || !IsAdminUser()) return redirect("/");
+        if (!user || !locals.isAdmin) return redirect("/");
     }
 
     if (authRoutes.some((route) => pathname.startsWith(route))) {

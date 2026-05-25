@@ -1,9 +1,10 @@
 ---
 interface Props {
     user: import("@supabase/supabase-js").User;
+    isAdmin: boolean;
 }
 
-const { user } = Astro.props;
+const { user, isAdmin } = Astro.props;
 const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
 const fullName = user.user_metadata?.full_name;
 ---
@@ -26,14 +27,18 @@ const fullName = user.user_metadata?.full_name;
         </div>
 
         <ul class="flex list-none flex-col p-0">
-            <li>
-                <a
-                    href="/admin"
-                    class="font-bebas text-brand-cream hover:bg-brand-yellow hover:text-brand-black block px-4 py-2 text-lg transition-colors"
-                >
-                    Admin
-                </a>
-            </li>
+            {
+                isAdmin && (
+                    <li>
+                        <a
+                            href="/admin"
+                            class="font-bebas text-brand-cream hover:bg-brand-yellow hover:text-brand-black block px-4 py-2 text-lg transition-colors"
+                        >
+                            Admin
+                        </a>
+                    </li>
+                )
+            }
             <li>
                 <form action="/api/auth/signout" method="POST" class="m-0">
                     <button

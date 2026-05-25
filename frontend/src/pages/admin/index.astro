@@ -1,10 +1,185 @@
 ---
-import Layout from "@/layouts/Layout.astro";
+import AdminLayout from "@/layouts/Layout.astro";
+import { LayoutDashboard, ShoppingCart, UtensilsCrossed, ChefHat, Users, LogOut } from "lucide-react";
+
+const { user } = Astro.locals;
+
+const sidebarItems = [
+    { name: "Dashboard", icon: LayoutDashboard, href: "/admin", category: "General" },
+    { name: "Pedidos", icon: ShoppingCart, href: "/admin/pedidos", category: "Ventas" },
+    { name: "Ingredientes", icon: UtensilsCrossed, href: "/admin/ingredientes", category: "Inventario" },
+    { name: "Recetas", icon: ChefHat, href: "/admin/recetas", category: "Inventario" },
+    { name: "Admins", icon: Users, href: "/admin/authorized-users", category: "Sistema" }
+];
+
+const categories = [...new Set(sidebarItems.map((item) => item.category))];
+
+const fullName = user?.user_metadata?.full_name || "Admin";
+const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+const role = "Super Admin";
 ---
 
-<Layout title="Two Guys Burger - Admin">
-    <main
-        class="bg-brand-black font-vt selection:bg-brand-red flex min-h-screen items-center justify-center p-4 tracking-wider text-white selection:text-white"
-    >
-    </main>
-</Layout>
+<AdminLayout title="TGB - Panel de Control">
+    <div class="bg-brand-black flex min-h-screen pt-20">
+        <aside class="bg-brand-black border-brand-yellow fixed z-40 flex h-[calc(100vh-80px)] w-72 flex-col border-r-4">
+            <div class="border-brand-yellow/30 bg-brand-red/5 border-b-2 p-6">
+                <div class="font-marker text-brand-yellow -rotate-2 text-3xl tracking-tighter">
+                    TGB <span class="text-brand-red font-bebas -mt-2 block text-sm tracking-widest">ADMIN PANEL</span>
+                </div>
+            </div>
+
+            <nav class="custom-scrollbar flex-1 overflow-y-auto p-4">
+                {
+                    categories.map((category) => (
+                        <div class="mb-6">
+                            <p class="font-vt text-brand-red mb-3 px-2 text-sm tracking-[4px] uppercase">
+                                ► {category}
+                            </p>
+                            <ul class="space-y-1">
+                                {sidebarItems
+                                    .filter((item) => item.category === category)
+                                    .map((item) => (
+                                        <li>
+                                            <a
+                                                href={item.href}
+                                                class={`font-bebas group flex items-center gap-3 rounded-lg px-3 py-2 text-xl transition-all ${item.href === "/admin" ? "bg-brand-yellow text-brand-black" : "text-brand-cream hover:bg-brand-yellow hover:text-brand-black"}`}
+                                            >
+                                                <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                                <span>{item.name}</span>
+                                            </a>
+                                        </li>
+                                    ))}
+                            </ul>
+                        </div>
+                    ))
+                }
+            </nav>
+
+            <div class="border-brand-yellow bg-brand-yellow/5 border-t-4 p-4">
+                <div
+                    class="bg-brand-black border-brand-yellow flex items-center gap-3 border-2 p-2 shadow-[4px_4px_0_#e8192c]"
+                >
+                    <img src={avatarUrl} alt={fullName} class="border-brand-yellow h-10 w-10 rounded-full border-2" />
+                    <div class="min-w-0">
+                        <p class="font-bebas text-brand-yellow truncate text-lg leading-none">{fullName}</p>
+                        <p class="font-vt text-brand-cream/60 text-xs tracking-wider uppercase">{role}</p>
+                    </div>
+                </div>
+                <form action="/api/auth/signout" method="POST" class="mt-4">
+                    <button
+                        class="font-bebas bg-brand-red text-brand-cream flex w-full items-center justify-center gap-2 py-2 shadow-[4px_4px_0_#000] transition-all hover:brightness-110"
+                    >
+                        <LogOut className="h-4 w-4" />
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="ml-72 flex-1 p-8">
+            <header class="mb-10 flex items-end justify-between">
+                <div>
+                    <p class="font-marker text-brand-red mb-2 text-xl tracking-widest uppercase">★ Dashboard</p>
+                    <h1
+                        class="font-bebas text-brand-cream text-6xl leading-none"
+                        style="text-shadow: 4px 4px 0 #0a0a0a, 6px 6px 0 #ffd600"
+                    >
+                        Resumen General
+                    </h1>
+                </div>
+                <div class="font-vt text-brand-yellow bg-brand-black border-brand-yellow border-2 px-4 py-1 text-2xl">
+                    {
+                        new Date()
+                            .toLocaleDateString("es-MX", {
+                                weekday: "short",
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric"
+                            })
+                            .toUpperCase()
+                    }
+                </div>
+            </header>
+
+            <div class="mb-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                {
+                    [
+                        { label: "Ventas Hoy", value: "$12,450", color: "brand-teal", icon: ShoppingCart },
+                        { label: "Ordenes", value: "24", color: "brand-red", icon: ShoppingCart },
+                        { label: "Stock Bajo", value: "3", color: "brand-yellow", icon: UtensilsCrossed },
+                        { label: "Admins", value: "2", color: "brand-cream", icon: Users }
+                    ].map((stat) => (
+                        <div
+                            class={`bg-brand-black border-4 border-${stat.color} group relative overflow-hidden p-5 shadow-[8px_8px_0_#000] transition-transform hover:-translate-y-1`}
+                        >
+                            <div class="relative z-10">
+                                <p class={`font-vt text-${stat.color} mb-1 text-lg tracking-widest uppercase`}>
+                                    {stat.label}
+                                </p>
+                                <h3 class="font-bebas text-brand-cream text-4xl">{stat.value}</h3>
+                            </div>
+                            <stat.icon
+                                className={`absolute -right-4 -bottom-4 h-24 w-24 opacity-10 text-${stat.color} transition-transform group-hover:scale-110`}
+                            />
+                        </div>
+                    ))
+                }
+            </div>
+
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                <div
+                    class="bg-brand-black border-brand-cream border-4 p-6 shadow-[10px_10px_0_#0a0a0a,10px_10px_0_4px_#ffd600] lg:col-span-2"
+                >
+                    <h2
+                        class="font-bebas text-brand-yellow border-brand-yellow mb-6 flex items-center gap-2 border-b-2 pb-2 text-3xl"
+                    >
+                        <span class="text-brand-red">★</span> Pedidos Recientes
+                    </h2>
+                    <div class="space-y-4">
+                        <div
+                            class="border-brand-cream/20 hover:bg-brand-cream/5 flex cursor-pointer items-center justify-between border-2 p-4 transition-colors"
+                        >
+                            <div class="font-vt text-xl">#ORD-001 - Juan Perez</div>
+                            <div class="font-bebas text-brand-teal text-2xl">$450.00</div>
+                        </div>
+                        <div
+                            class="border-brand-cream/20 hover:bg-brand-cream/5 flex cursor-pointer items-center justify-between border-2 p-4 transition-colors"
+                        >
+                            <div class="font-vt text-xl">#ORD-002 - Maria Lopez</div>
+                            <div class="font-bebas text-brand-teal text-2xl">$280.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-brand-black border-brand-yellow border-4 p-6 shadow-[10px_10px_0_#e8192c]">
+                    <h2
+                        class="font-bebas text-brand-red border-brand-red mb-6 flex items-center gap-2 border-b-2 pb-2 text-3xl"
+                    >
+                        <span class="text-brand-yellow">★</span> Notificaciones
+                    </h2>
+                    <div class="font-vt text-brand-cream/80 space-y-4 text-xl">
+                        <p class="border-brand-yellow bg-brand-yellow/5 border-l-4 py-1 pl-3">
+                            Stock de "Carne Wagyu" está por agotarse.
+                        </p>
+                        <p class="border-brand-red bg-brand-red/5 border-l-4 py-1 pl-3">
+                            Nuevo pedido en espera: #ORD-003
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</AdminLayout>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #ffd600;
+        border-radius: 10px;
+    }
+</style>

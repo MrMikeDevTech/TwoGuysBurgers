@@ -1,7 +1,7 @@
 ---
 import UserDropdown from "./UserDropdown.astro";
 import { Cart } from "./Cart";
-const { user } = Astro.locals;
+const { user, isAdmin } = Astro.locals;
 
 const links = [
     { label: "Menú", href: "/menu" },
@@ -33,7 +33,7 @@ const links = [
         {
             user ? (
                 <li>
-                    <UserDropdown user={user} />
+                    <UserDropdown user={user} isAdmin={isAdmin} />
                 </li>
             ) : (
                 <li>

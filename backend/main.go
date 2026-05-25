@@ -43,9 +43,9 @@ func main() {
 
 	port := os.Getenv("BACK_PORT")
 	if port == "" {
-		port = "19000"
+		port = "18000"
 	}
 
 	log.Printf("Servidor corriendo en el puerto %s\n", port)
-	log.Fatal(http.ListenAndServe(":"+port, mux))
+	log.Fatal(http.ListenAndServe(":"+port, middleware.CORSMiddleware(mux)))
 }

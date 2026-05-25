@@ -94,6 +94,8 @@ if (product.type === "recipe") {
                             name={product.name}
                             price={product.price}
                             img={product.img}
+                            type={product.type as any}
+                            recipes={(product as any).recipes}
                         />
 
                         <a

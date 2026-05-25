@@ -8,20 +8,36 @@ interface Props {
     name: string;
     price: number;
     img: string;
+    type?: "recipe" | "combo";
+    recipes?: { recipe_id: string; amount: number }[];
 }
 
-export const AddToCart = ({ id, name, price, img }: Props) => {
+export const AddToCart = ({ id, name, price, img, type = "recipe", recipes }: Props) => {
     const [quantity, setQuantity] = useState(1);
     const [isAdded, setIsAdded] = useState(false);
 
     const handleAdd = () => {
-        addCartItem({ id, name, price, img }, quantity);
+        addCartItem({ id, name, price, img, type, recipes }, quantity);
 
-        console.log("Adding to cart:", name);
-
-        toast.success(`★ ${quantity}x ${name} agregado(s)`, {
-            autoClose: 3000
-        });
+        toast.success(
+            <div className="flex flex-col gap-1">
+                <span className="font-bebas text-xl">¡AGREGADO CON ÉXITO!</span>
+                <span className="font-vt text-lg">
+                    {quantity}x {name}
+                </span>
+            </div>,
+            {
+                position: "bottom-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                className:
+                    "bg-brand-black border-brand-yellow border-4 text-brand-yellow font-vt shadow-[4px_4px_0_#E8192C]",
+                progressClassName: "bg-brand-red"
+            }
+        );
 
         setIsAdded(true);
         setTimeout(() => {

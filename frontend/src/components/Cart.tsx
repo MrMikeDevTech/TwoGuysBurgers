@@ -4,6 +4,9 @@ import { cartItems, removeCartItem, updateQuantity, clearCart } from "@/store/ca
 import { ShoppingCart, X, Plus, Minus, Trash2, Check } from "lucide-react";
 import { toast } from "react-toastify";
 
+import { createOrder } from "@/services/Orders";
+import type { RecipeOrder } from "@/models/order";
+
 export const Cart = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -16,26 +19,75 @@ export const Cart = () => {
     const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
     const totalPrice = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-    const handleCheckout = () => {
+    const handleCheckout = async () => {
+        if (items.length === 0) return;
+
         setIsCheckingOut(true);
         setCheckoutProgress(0);
 
-        toast.success("¡Procesando pedido!", { autoClose: 2000 });
+        const recipeOrders: RecipeOrder[] = [];
+
+        items.forEach((item) => {
+            if (item.type === "recipe") {
+                recipeOrders.push({
+                    recipe_id: item.id,
+                    amount: item.quantity
+                });
+            } else if (item.type === "combo" && item.recipes) {
+                item.recipes.forEach((r) => {
+                    const existing = recipeOrders.find((ro) => ro.recipe_id === r.recipe_id);
+                    if (existing) {
+                        existing.amount += r.amount * item.quantity;
+                    } else {
+                        recipeOrders.push({
+                            recipe_id: r.recipe_id,
+                            amount: r.amount * item.quantity
+                        });
+                    }
+                });
+            }
+        });
+
+        const orderData = {
+            customer_name: "Cliente Web",
+            total_price: totalPrice,
+            recipe_orders: recipeOrders
+        };
 
         const interval = setInterval(() => {
-            setCheckoutProgress((prev) => {
-                if (prev >= 100) {
-                    clearInterval(interval);
-                    setIsCheckoutDone(true);
-                    setTimeout(() => {
-                        clearCart();
-                        window.location.href = "/checkout";
-                    }, 1000);
-                    return 100;
-                }
-                return prev + 5;
-            });
+            setCheckoutProgress((prev) => (prev >= 90 ? 90 : prev + 10));
         }, 100);
+
+        try {
+            const order = await createOrder(orderData);
+            clearInterval(interval);
+            setCheckoutProgress(100);
+
+            if (order) {
+                setIsCheckoutDone(true);
+                toast.success("¡Pedido realizado con éxito!");
+
+                sessionStorage.setItem(
+                    "last_order",
+                    JSON.stringify({
+                        ...order,
+                        items: items.map((i) => ({ name: i.name, quantity: i.quantity, price: i.price }))
+                    })
+                );
+
+                setTimeout(() => {
+                    clearCart();
+                    window.location.href = "/checkout";
+                }, 1000);
+            } else {
+                setIsCheckingOut(false);
+                toast.error("Error al procesar el pedido");
+            }
+        } catch {
+            clearInterval(interval);
+            setIsCheckingOut(false);
+            toast.error("Error al conectar con el servidor");
+        }
     };
 
     return (

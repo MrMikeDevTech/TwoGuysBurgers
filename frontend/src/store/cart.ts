@@ -1,11 +1,13 @@
 import { map } from "nanostores";
 
 export interface CartItem {
-    id: string;
+    id: string; // This is the ID of the product added (Recipe or Combo)
     name: string;
     price: number;
     img: string;
     quantity: number;
+    type: "recipe" | "combo";
+    recipes?: { recipe_id: string; amount: number }[]; // For combos, store constituent recipes
 }
 
 export const cartItems = map<Record<string, CartItem>>({});

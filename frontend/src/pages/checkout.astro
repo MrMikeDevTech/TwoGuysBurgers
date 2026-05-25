@@ -1,6 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { Check, ArrowLeft, Ticket } from "lucide-react";
+import { Check, ArrowLeft, Ticket as TicketIcon } from "lucide-react";
 ---
 
 <Layout title="Two Guys Burger - ¡Pedido Realizado!">
@@ -21,52 +21,57 @@ import { Check, ArrowLeft, Ticket } from "lucide-react";
         <div class="border-brand-black relative w-full max-w-md border-4 bg-white p-8 shadow-[12px_12px_0_#000]">
             <div class="absolute -top-3 right-0 left-0 flex h-3 justify-around overflow-hidden">
                 {
-                    Array.from({ length: 20 }).map(() => (
-                        <div class="bg-brand-yellow border-brand-black h-4 w-4 -translate-y-2 rotate-45 border-2" />
+                    Array.from({ length: 20 }).map((_, i) => (
+                        <div key={i} class="bg-brand-yellow border-brand-black h-4 w-4 -translate-y-2 rotate-45 border-2" />
                     ))
                 }
             </div>
 
-            <div class="mb-8 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <Ticket className="text-brand-black" />
-                    <span class="font-bebas text-2xl">TICKET #{Math.floor(Math.random() * 10000) + 1}</span>
+            <div id="receipt-content" class="hidden">
+                <div class="mb-8 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <TicketIcon className="text-brand-black" />
+                        <span class="font-bebas text-2xl">TICKET #<span id="order-id"></span></span>
+                    </div>
+                    <span class="font-vt text-lg" id="order-date"></span>
                 </div>
-                <span class="font-vt text-lg">{new Date().toLocaleDateString()}</span>
+
+                <div class="border-brand-black my-6 space-y-4 border-y-2 border-dashed py-6">
+                    <div class="font-vt flex justify-between text-xl">
+                        <span>ESTADO:</span>
+                        <span class="font-bold text-green-600">CONFIRMADO</span>
+                    </div>
+                    <div class="font-vt flex justify-between text-xl">
+                        <span>CLIENTE:</span>
+                        <span id="customer-name"></span>
+                    </div>
+                    
+                    <div class="border-brand-black border-t-2 border-dashed pt-4">
+                        <p class="font-bebas mb-2 text-xl">PRODUCTOS:</p>
+                        <ul id="product-list" class="font-vt space-y-2 text-lg">
+                        </ul>
+                    </div>
+
+                    <div class="border-brand-black border-t-2 border-dashed pt-4 flex justify-between items-end">
+                        <span class="font-bebas text-2xl">TOTAL:</span>
+                        <span class="font-bebas text-brand-red text-4xl" id="order-total"></span>
+                    </div>
+                </div>
+
+                <div class="font-vt mt-8 text-center text-lg opacity-60">
+                    <p>GRACIAS POR TU COMPRA</p>
+                    <p>¡VUELVE PRONTO POR MÁS BRUTALIDAD!</p>
+                </div>
             </div>
 
-            <div class="border-brand-black my-6 space-y-4 border-y-2 border-dashed py-6">
-                <div class="font-vt flex justify-between text-xl">
-                    <span>ESTADO:</span>
-                    <span class="font-bold text-green-600">CONFIRMADO</span>
-                </div>
-                <div class="font-vt flex justify-between text-xl">
-                    <span>PAGO:</span>
-                    <span>EFECTIVO</span>
-                </div>
-                <div class="font-vt flex flex-col justify-between text-xl">
-                    <span>PRODUCTOS:</span>
-                    <ul class="">
-                        <li>1</li>
-                        <li>2</li>
-                        <li>3</li>
-                    </ul>
-                </div>
-                <div class="font-vt flex justify-between text-xl">
-                    <span>TOTAL:</span>
-                    <span>$300.00</span>
-                </div>
-            </div>
-
-            <div class="font-vt mt-8 text-center text-lg opacity-60">
-                <p>GRACIAS POR TU COMPRA</p>
-                <p>¡VUELVE PRONTO POR MÁS BRUTALIDAD!</p>
+            <div id="no-order" class="font-vt py-10 text-center text-2xl">
+                Cargando ticket...
             </div>
 
             <div class="absolute right-0 -bottom-3 left-0 flex h-3 justify-around overflow-hidden">
                 {
-                    Array.from({ length: 20 }).map(() => (
-                        <div class="bg-brand-yellow border-brand-black h-4 w-4 translate-y-2 rotate-45 border-2" />
+                    Array.from({ length: 20 }).map((_, i) => (
+                        <div key={i} class="bg-brand-yellow border-brand-black h-4 w-4 translate-y-2 rotate-45 border-2" />
                     ))
                 }
             </div>
@@ -82,6 +87,43 @@ import { Check, ArrowLeft, Ticket } from "lucide-react";
         </div>
     </main>
 </Layout>
+
+<script>
+    const lastOrderStr = sessionStorage.getItem("last_order");
+    if (lastOrderStr) {
+        const order = JSON.parse(lastOrderStr);
+        document.getElementById("receipt-content")?.classList.remove("hidden");
+        document.getElementById("no-order")?.classList.add("hidden");
+
+        const orderIdEl = document.getElementById("order-id");
+        if (orderIdEl) orderIdEl.textContent = order.id.substring(order.id.length - 6).toUpperCase();
+        
+        const orderDateEl = document.getElementById("order-date");
+        if (orderDateEl) orderDateEl.textContent = new Date(order.date).toLocaleDateString();
+
+        const customerNameEl = document.getElementById("customer-name");
+        if (customerNameEl) customerNameEl.textContent = order.customer_name;
+
+        const productListEl = document.getElementById("product-list");
+        if (productListEl && order.items) {
+            order.items.forEach((item: any) => {
+                const li = document.createElement("li");
+                li.className = "flex justify-between";
+                li.innerHTML = `
+                    <span>${item.quantity}x ${item.name}</span>
+                    <span>$${item.price * item.quantity}</span>
+                `;
+                productListEl.appendChild(li);
+            });
+        }
+
+        const orderTotalEl = document.getElementById("order-total");
+        if (orderTotalEl) orderTotalEl.textContent = `$${order.total_price}`;
+    } else {
+        const noOrderEl = document.getElementById("no-order");
+        if (noOrderEl) noOrderEl.textContent = "No se encontró información del pedido.";
+    }
+</script>
 
 <style>
     @keyframes bounce {

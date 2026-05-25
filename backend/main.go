@@ -26,6 +26,16 @@ func publicGet(h http.HandlerFunc) http.Handler {
 	})
 }
 
+func publicOrder(h http.HandlerFunc) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			h.ServeHTTP(w, r)
+			return
+		}
+		middleware.AuthMiddleware(http.HandlerFunc(h)).ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("error cargando .env")
@@ -48,7 +58,7 @@ func main() {
 	mux.Handle("/recipes/{id}", publicGet(handlers.RecipeHandler))
 	mux.Handle("/combos", publicGet(handlers.CombosHandler))
 	mux.Handle("/combos/{id}", publicGet(handlers.ComboHandler))
-	mux.Handle("/orders", protected(handlers.OrdersHandler))
+	mux.Handle("/orders", publicOrder(handlers.OrdersHandler))
 	mux.Handle("/orders/{id}", protected(handlers.OrderHandler))
 	mux.HandleFunc("/auth/is-admin", handlers.AuthHandler)
 	mux.Handle("/auth/admins/{email}", protected(handlers.AdminHandler))

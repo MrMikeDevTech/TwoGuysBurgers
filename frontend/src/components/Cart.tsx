@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 
 import { createOrder } from "@/services/Orders";
 import type { RecipeOrder } from "@/models/order";
+import { createBrowserSupabaseClient } from "@/lib/supabase";
 
 export const Cart = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -24,6 +25,13 @@ export const Cart = () => {
 
         setIsCheckingOut(true);
         setCheckoutProgress(0);
+
+        const supabase = createBrowserSupabaseClient();
+        const {
+            data: { session }
+        } = await supabase.auth.getSession();
+        const token = session?.access_token;
+        const customerName = session?.user?.user_metadata?.full_name || session?.user?.email || "Cliente Web";
 
         const recipeOrders: RecipeOrder[] = [];
 
@@ -49,7 +57,7 @@ export const Cart = () => {
         });
 
         const orderData = {
-            customer_name: "Cliente Web",
+            customer_name: customerName,
             total_price: totalPrice,
             recipe_orders: recipeOrders
         };
@@ -59,7 +67,7 @@ export const Cart = () => {
         }, 100);
 
         try {
-            const order = await createOrder(orderData);
+            const order = await createOrder(orderData, token);
             clearInterval(interval);
             setCheckoutProgress(100);
 
@@ -83,7 +91,8 @@ export const Cart = () => {
                 setIsCheckingOut(false);
                 toast.error("Error al procesar el pedido");
             }
-        } catch {
+        } catch (error) {
+            console.error("Error creating order:", error);
             clearInterval(interval);
             setIsCheckingOut(false);
             toast.error("Error al conectar con el servidor");

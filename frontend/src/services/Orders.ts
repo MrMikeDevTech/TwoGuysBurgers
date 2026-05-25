@@ -22,13 +22,19 @@ export const getOrders = async (token: string): Promise<Order[]> => {
     }
 };
 
-export const createOrder = async (order: CreateOrderDTO): Promise<Order | null> => {
+export const createOrder = async (order: CreateOrderDTO, token?: string): Promise<Order | null> => {
     try {
+        const headers: Record<string, string> = {
+            "Content-Type": "application/json"
+        };
+
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+
         const response = await fetch(`${API_URL}/orders`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers,
             body: JSON.stringify({
                 customer_name: order.customer_name,
                 total_price: order.total_price,

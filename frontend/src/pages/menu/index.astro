@@ -1,8 +1,20 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import ProductCard from "@/components/ProductCard.astro";
-import { burgers, compartibles, combos } from "@/data/products";
 import Ticker from "@/components/Ticker.astro";
+import { getRecipes } from "@/services/Recipes";
+import { getCombos } from "@/services/Combos";
+
+const recipes = await getRecipes("");
+const combosData = await getCombos("");
+
+const burgers = recipes
+    .filter((r) => r.kind === "product")
+    .map((r) => ({ ...r, img: r.image_url }));
+const compartibles = recipes
+    .filter((r) => r.kind === "consumable")
+    .map((r) => ({ ...r, img: r.image_url }));
+const combos = combosData.map((c) => ({ ...c, img: c.image_url }));
 ---
 
 <Layout title="Two Guys Burger - Menú">

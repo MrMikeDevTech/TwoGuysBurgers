@@ -1,7 +1,9 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { burgers, compartibles, combos, ingredients } from "@/data/products";
 import { AddToCart } from "@/components/AddToCart";
+import { getRecipes } from "@/services/Recipes";
+import { getCombos } from "@/services/Combos";
+import { getIngredients } from "@/services/Ingredients";
 
 const { productId } = Astro.params;
 
@@ -11,8 +13,15 @@ const slugify = (text: string) =>
         .replace(/\s+/g, "-")
         .replace(/[^\w-]+/g, "");
 
-const allProducts = [...burgers, ...compartibles, ...combos];
-const product = allProducts.find((b) => slugify(b.name) === productId);
+const recipes = await getRecipes("");
+const combos = await getCombos("");
+
+const allProducts = [
+    ...recipes.map((r) => ({ ...r, type: "recipe", img: r.image_url })),
+    ...combos.map((c) => ({ ...c, type: "combo", img: c.image_url }))
+];
+
+const product = allProducts.find((p) => slugify(p.name) === productId);
 const slug = productId;
 
 if (!product) {
@@ -20,15 +29,16 @@ if (!product) {
 }
 
 let displayIngredients: any[] = [];
-if ("ingredients" in product) {
-    displayIngredients = product.ingredients.map((item) => {
-        const ingredient = ingredients.find((i) => i.id === item.id);
-        return { ...ingredient, quantity: item.quantity };
+if (product.type === "recipe") {
+    const allIngredients = await getIngredients("");
+    displayIngredients = (product as any).ingredients.map((item: any) => {
+        const ingredient = allIngredients.find((i) => i.id === item.ingredient_id);
+        return { ...ingredient, quantity: item.amount, img: ingredient?.image_url };
     });
-} else if ("products" in product) {
-    displayIngredients = product.products.map((item) => {
-        const recipe = allProducts.find((r) => r.id === item.recipeId);
-        return { ...recipe, quantity: item.amount, isRecipe: true };
+} else if (product.type === "combo") {
+    displayIngredients = (product as any).recipes.map((item: any) => {
+        const recipe = recipes.find((r) => r.id === item.recipe_id);
+        return { ...recipe, quantity: item.amount, isRecipe: true, img: recipe?.image_url };
     });
 }
 ---
@@ -100,7 +110,7 @@ if ("ingredients" in product) {
                 displayIngredients.length > 0 && (
                     <div class="border-brand-black mt-20 border-t-4 pt-12">
                         <h2 class="font-bebas text-brand-black mb-8 text-4xl tracking-wider">
-                            {"products" in product ? "LO QUE INCLUYE" : "INGREDIENTES"}
+                            {product.type === "combo" ? "LO QUE INCLUYE" : "INGREDIENTES"}
                         </h2>
                         <div class="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                             {

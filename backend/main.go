@@ -16,6 +16,16 @@ func protected(h http.HandlerFunc) http.Handler {
 	return middleware.AuthMiddleware(http.HandlerFunc(h))
 }
 
+func publicGet(h http.HandlerFunc) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			h.ServeHTTP(w, r)
+			return
+		}
+		middleware.AuthMiddleware(http.HandlerFunc(h)).ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("error cargando .env")
@@ -32,12 +42,12 @@ func main() {
 	db.ConnectSupabase()
 	mux := http.NewServeMux()
 
-	mux.Handle("/ingredients", protected(handlers.IngredientsHandler))
-	mux.Handle("/ingredients/{id}", protected(handlers.IngredientHandler))
-	mux.Handle("/recipes", protected(handlers.RecipesHandler))
-	mux.Handle("/recipes/{id}", protected(handlers.RecipeHandler))
-	mux.Handle("/combos", protected(handlers.CombosHandler))
-	mux.Handle("/combos/{id}", protected(handlers.ComboHandler))
+	mux.Handle("/ingredients", publicGet(handlers.IngredientsHandler))
+	mux.Handle("/ingredients/{id}", publicGet(handlers.IngredientHandler))
+	mux.Handle("/recipes", publicGet(handlers.RecipesHandler))
+	mux.Handle("/recipes/{id}", publicGet(handlers.RecipeHandler))
+	mux.Handle("/combos", publicGet(handlers.CombosHandler))
+	mux.Handle("/combos/{id}", publicGet(handlers.ComboHandler))
 	mux.Handle("/orders", protected(handlers.OrdersHandler))
 	mux.Handle("/orders/{id}", protected(handlers.OrderHandler))
 	mux.HandleFunc("/auth/is-admin", handlers.AuthHandler)

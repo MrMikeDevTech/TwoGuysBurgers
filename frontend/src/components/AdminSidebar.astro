@@ -1,5 +1,5 @@
 ---
-import { LayoutDashboard, ShoppingCart, UtensilsCrossed, ChefHat, Users, LogOut, X, Menu } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, UtensilsCrossed, ChefHat, Users, LogOut, X, Menu, Layers } from "lucide-react";
 
 const { user } = Astro.locals;
 const currentPath = Astro.url.pathname.replace(/\/$/, ""); // Normalize path
@@ -9,6 +9,7 @@ const sidebarItems = [
     { name: "Ordenes", icon: ShoppingCart, href: "/admin/orders", category: "Ventas" },
     { name: "Ingredientes", icon: UtensilsCrossed, href: "/admin/ingredients", category: "Inventario" },
     { name: "Recetas", icon: ChefHat, href: "/admin/recipes", category: "Inventario" },
+    { name: "Combos", icon: Layers, href: "/admin/combos", category: "Inventario" },
     { name: "Usuarios Autorizados", icon: Users, href: "/admin/authorized-users", category: "Sistema" }
 ];
 

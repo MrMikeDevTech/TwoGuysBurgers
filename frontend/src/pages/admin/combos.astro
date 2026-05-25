@@ -1,0 +1,54 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import AdminSidebar from "@/components/AdminSidebar.astro";
+import { Layers } from "lucide-react";
+import { ComboManager } from "@/components/ComboManager";
+
+const {
+    data: { session }
+} = await Astro.locals.supabase.auth.getSession();
+const token = session?.access_token || "";
+---
+
+<AdminLayout title="Two Guys Burger - Gestión de Combos">
+    <div class="bg-brand-black flex min-h-screen pt-20">
+        <AdminSidebar />
+
+        <main class="flex-1 p-4 lg:ml-72 lg:p-8">
+            <header class="mb-10 flex flex-col items-start gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                    <p class="font-marker text-brand-red mb-2 text-xl tracking-widest uppercase">★ Menú</p>
+                    <h1
+                        class="font-bebas text-brand-cream text-6xl leading-none"
+                        style="text-shadow: 4px 4px 0 #0a0a0a, 6px 6px 0 #ffd600"
+                    >
+                        Combos
+                    </h1>
+                </div>
+                <div
+                    class="font-vt text-brand-yellow bg-brand-black border-brand-yellow flex items-center gap-2 border-2 px-4 py-1 text-2xl"
+                >
+                    <Layers className="h-6 w-6" />
+                    ADMINISTRADOR DE COMBOS
+                </div>
+            </header>
+
+            <div class="mt-8">
+                <ComboManager client:load token={token} />
+            </div>
+        </main>
+    </div>
+</AdminLayout>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #ffd600;
+        border-radius: 10px;
+    }
+</style>

@@ -33,3 +33,11 @@ type UpdateOrderDTO struct {
 	TotalPrice   *float64        `json:"total_price"`
 	RecipeOrders *[]RecipeAmount `json:"recipe_orders"`
 }
+
+type UpdateComboDTO struct {
+	Name        *string              `json:"name"`
+	Description *string              `json:"description"`
+	Price       *float64             `json:"price"`
+	Recipes     *[]ComboRecipeAmount `json:"recipes"`
+	ImageUrl    *string              `json:"image_url"`
+}

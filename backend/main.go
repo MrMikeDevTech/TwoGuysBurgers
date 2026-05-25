@@ -36,6 +36,8 @@ func main() {
 	mux.Handle("/ingredients/{id}", protected(handlers.IngredientHandler))
 	mux.Handle("/recipes", protected(handlers.RecipesHandler))
 	mux.Handle("/recipes/{id}", protected(handlers.RecipeHandler))
+	mux.Handle("/combos", protected(handlers.CombosHandler))
+	mux.Handle("/combos/{id}", protected(handlers.ComboHandler))
 	mux.Handle("/orders", protected(handlers.OrdersHandler))
 	mux.Handle("/orders/{id}", protected(handlers.OrderHandler))
 	mux.HandleFunc("/auth/is-admin", handlers.AuthHandler)

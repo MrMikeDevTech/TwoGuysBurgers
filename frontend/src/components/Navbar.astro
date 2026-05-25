@@ -1,6 +1,7 @@
 ---
 import UserDropdown from "./UserDropdown.astro";
 import { Cart } from "./Cart";
+import { TermsModal } from "./TermsModal";
 
 const { user, isAdmin, token } = Astro.locals;
 const customerName = user?.user_metadata?.full_name || user?.email || "Cliente Web";
@@ -39,14 +40,29 @@ const links = [
                 </li>
             ) : (
                 <li>
-                    <a
-                        href="/api/auth/signin"
+                    <button
+                        id="login-trigger"
                         class="font-bebas bg-brand-yellow text-brand-black inline-block cursor-pointer rounded border-none px-4 py-1 text-lg uppercase transition-colors hover:bg-yellow-500"
                     >
                         Entrar
-                    </a>
+                    </button>
+                    <TermsModal client:load />
                 </li>
             )
         }
     </ul>
 </nav>
+
+<script>
+    document.addEventListener("astro:page-load", () => {
+        const trigger = document.getElementById("login-trigger");
+        const modal = document.querySelector("#terms-modal");
+
+        if (trigger && modal) {
+            trigger.addEventListener("click", () => {
+                const event = new CustomEvent("open-terms-modal");
+                window.dispatchEvent(event);
+            });
+        }
+    });
+</script>

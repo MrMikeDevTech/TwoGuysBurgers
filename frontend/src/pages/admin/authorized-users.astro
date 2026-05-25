@@ -1,5 +1,5 @@
 ---
-import Layout from "@/layouts/Layout.astro";
+import AdminLayout from "@/layouts/AdminLayout.astro";
 import { LayoutDashboard, ShoppingCart, UtensilsCrossed, ChefHat, Users, LogOut, ShieldCheck } from "lucide-react";
 import { AdminActions } from "@/components/AdminActions";
 
@@ -23,7 +23,7 @@ const fullName = user?.user_metadata?.full_name || "Admin";
 const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
 ---
 
-<Layout title="Two Guys Burger - Usuarios Autorizados">
+<AdminLayout title="Two Guys Burger - Usuarios Autorizados">
     <div class="bg-brand-black flex min-h-screen pt-20">
         <aside class="bg-brand-black border-brand-yellow fixed z-40 flex h-[calc(100vh-80px)] w-72 flex-col border-r-4">
             <div class="border-brand-yellow/30 bg-brand-red/5 border-b-2 p-6">
@@ -66,7 +66,7 @@ const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.pictur
                     <img src={avatarUrl} alt={fullName} class="border-brand-yellow h-10 w-10 rounded-full border-2" />
                     <div class="min-w-0">
                         <p class="font-bebas text-brand-yellow truncate text-lg leading-none">{fullName}</p>
-                        <p class="font-vt text-brand-cream/60 text-xs tracking-wider uppercase">Super Admin</p>
+                        <p class="font-vt text-brand-cream/60 text-xs tracking-wider uppercase">Admin</p>
                     </div>
                 </div>
                 <form action="/api/auth/signout" method="POST" class="mt-4">
@@ -121,7 +121,7 @@ const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.pictur
             </div>
         </main>
     </div>
-</Layout>
+</AdminLayout>
 
 <style>
     .custom-scrollbar::-webkit-scrollbar {

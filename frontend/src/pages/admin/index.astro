@@ -1,5 +1,5 @@
 ---
-import AdminLayout from "@/layouts/Layout.astro";
+import AdminLayout from "@/layouts/AdminLayout.astro";
 import { LayoutDashboard, ShoppingCart, UtensilsCrossed, ChefHat, Users, LogOut } from "lucide-react";
 
 const { user } = Astro.locals;
@@ -16,7 +16,7 @@ const categories = [...new Set(sidebarItems.map((item) => item.category))];
 
 const fullName = user?.user_metadata?.full_name || "Admin";
 const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
-const role = "Super Admin";
+const role = "Admin";
 ---
 
 <AdminLayout title="Two Guys Burger - Panel de Control">

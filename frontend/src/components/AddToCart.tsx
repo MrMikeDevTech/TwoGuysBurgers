@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { addCartItem } from "@/store/cart";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { Check } from "lucide-react";
 
 interface Props {
@@ -20,7 +20,7 @@ export const AddToCart = ({ id, name, price, img }: Props) => {
         console.log("Adding to cart:", name);
 
         toast.success(`★ ${quantity}x ${name} agregado(s)`, {
-            duration: 3000
+            autoClose: 3000
         });
 
         setIsAdded(true);

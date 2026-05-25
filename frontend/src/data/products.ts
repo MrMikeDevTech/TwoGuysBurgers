@@ -46,8 +46,6 @@ export interface Combo {
     products: { recipeId: string; amount: number }[];
 }
 
-//-------
-
 export const ingredients: Ingredient[] = [
     {
         id: "1",
